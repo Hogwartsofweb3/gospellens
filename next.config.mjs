@@ -1,0 +1,91 @@
+import { withSentryConfig } from "@sentry/nextjs";
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "i.ytimg.com" },
+      { protocol: "https", hostname: "img.youtube.com" },
+      { protocol: "https", hostname: "**.supabase.co" },
+      { protocol: "https", hostname: "**.supabase.in" },
+      { protocol: "https", hostname: "**.cloudfront.net" },
+      { protocol: "https", hostname: "**.amazonaws.com" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "**.googleapis.com" },
+      { protocol: "https", hostname: "**.gstatic.com" },
+      { protocol: "http", hostname: "localhost" },
+    ],
+  },
+
+  // ─── Security Headers ────────────────────────────────────────────────────
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              // Next.js needs unsafe-eval in dev; scripts from Stripe and PostHog
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' js.stripe.com *.posthog.com app.posthog.com",
+              // API connections to Supabase, Stripe, PostHog, Sentry, Upstash
+              "connect-src 'self' *.supabase.co *.supabase.in wss://*.supabase.co api.stripe.com *.sentry.io *.posthog.com app.posthog.com *.upstash.io",
+              // Images from YouTube, Supabase Storage, CDNs
+              "img-src 'self' data: blob: i.ytimg.com img.youtube.com *.supabase.co *.supabase.in *.amazonaws.com *.cloudfront.net *.googleapis.com",
+              // YouTube embeds and Stripe payment iframe
+              "frame-src 'self' *.youtube.com youtube.com *.stripe.com",
+              // Google Fonts
+              "font-src 'self' fonts.gstatic.com fonts.googleapis.com",
+              // Style from self and Google Fonts
+              "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
+              // Microphone/camera not needed
+              "media-src 'self' blob: *.supabase.co *.amazonaws.com *.cloudfront.net",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "upgrade-insecure-requests",
+            ].join("; "),
+          },
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), payment=(self *.stripe.com)",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          {
+            key: "X-DNS-Prefetch-Control",
+            value: "on",
+          },
+        ],
+      },
+    ];
+  },
+};
+
+export default withSentryConfig(nextConfig, {
+  // Sentry webpack plugin options
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  // Upload source maps in production builds only
+  silent: true, // Suppress logs unless there's an error
+  widenClientFileUpload: true,
+  // Automatically tree-shake Sentry logger statements
+  disableLogger: true,
+  // Automatically instrument Next.js data fetching methods
+  automaticVercelMonitors: true,
+});

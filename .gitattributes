@@ -1,0 +1,12 @@
+# Normalise line endings to LF on commit (cross-platform consistency)
+* text=auto eol=lf
+
+# Explicitly declare binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.webp binary
+*.gif binary
+*.woff binary
+*.woff2 binary

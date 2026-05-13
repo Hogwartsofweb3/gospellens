@@ -1,0 +1,16 @@
+{
+  "buildCommand": "npm run build",
+  "framework": "nextjs",
+  "regions": ["lhr1"],
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/admin/refresh-feeds",
+      "schedule": "*/30 * * * *"
+    }
+  ]
+}
