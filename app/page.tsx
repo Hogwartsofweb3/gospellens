@@ -349,104 +349,7 @@ function MinistriesSection() {
   );
 }
 
-// ── Pricing ───────────────────────────────────────────────────────────────
-const FREE_FEATURES = ["Article access", "Limited podcast previews", "Basic search", "1 ministry follow"];
-const PREMIUM_FEATURES = [
-  "Everything in Free",
-  "Unlimited podcasts & audio",
-  "Offline reading",
-  "Ad-free experience",
-  "Exclusive ministry content",
-  "Unlimited ministry follows",
-];
-
-function PricingSection() {
-  const router = useRouter();
-
-  return (
-    <section id="pricing" className="py-24 px-6 md:px-12 bg-surface/30">
-      <div className="max-w-4xl mx-auto text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="font-poppins font-bold text-white text-4xl mb-4"
-        >
-          Simple, honest pricing
-        </motion.h2>
-        <p className="text-text-secondary mb-16">Start free. Upgrade when you're ready.</p>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Free */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="p-8 rounded-xl border border-white/20 text-left flex flex-col"
-            style={{ backgroundColor: "#1A1A1A" }}
-          >
-            <div className="mb-6">
-              <h3 className="text-white font-poppins font-bold text-xl mb-1">Free</h3>
-              <p className="text-text-secondary text-sm">Everything you need to get started.</p>
-              <p className="text-4xl font-bold text-white mt-4">$0 <span className="text-text-muted text-base font-normal">/month</span></p>
-            </div>
-            <ul className="flex flex-col gap-3 flex-1 mb-8">
-              {FREE_FEATURES.map((f) => (
-                <li key={f} className="flex items-center gap-3 text-sm text-text-secondary">
-                  <Check className="w-4 h-4 text-white/50 flex-shrink-0" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={() => router.push("/signup")}
-              className="w-full py-3 rounded-pill border border-white/30 text-white text-sm font-semibold hover:bg-white/10 transition-colors"
-            >
-              Get Started Free
-            </button>
-          </motion.div>
-
-          {/* Premium */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="relative p-8 rounded-xl border border-primary text-left flex flex-col shadow-glow-pink"
-            style={{ backgroundColor: "#1A1A1A" }}
-          >
-            {/* Badge */}
-            <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-4 py-1 rounded-full">
-              Most Popular
-            </span>
-            <div className="mb-6">
-              <h3 className="text-white font-poppins font-bold text-xl mb-1">Premium</h3>
-              <p className="text-text-secondary text-sm">The full Gospel Lens experience.</p>
-              <p className="text-4xl font-bold text-white mt-4">
-                $6.99 <span className="text-text-muted text-base font-normal">/month</span>
-              </p>
-              <p className="text-primary text-sm mt-1">or $59.99/year — save 30%</p>
-            </div>
-            <ul className="flex flex-col gap-3 flex-1 mb-8">
-              {PREMIUM_FEATURES.map((f) => (
-                <li key={f} className="flex items-center gap-3 text-sm text-text-secondary">
-                  <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={() => router.push("/signup")}
-              className="w-full py-3 rounded-pill bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors shadow-glow-pink"
-            >
-              Start 7-Day Free Trial
-            </button>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
+// ── Pricing removed for 100% free model ─────────────────────────────────────
 // ── Footer ────────────────────────────────────────────────────────────────
 function Footer() {
   return (
@@ -464,7 +367,7 @@ function Footer() {
           <div className="flex gap-16">
             <div className="flex flex-col gap-3">
               <p className="text-white text-sm font-semibold mb-1">Product</p>
-              {[["Features", "#features"], ["Pricing", "#pricing"], ["Sign In", "/signin"], ["Get Started", "/signup"]].map(([l, h]) => (
+              {[["Features", "#features"], ["Sign In", "/signin"], ["Get Started", "/signup"]].map(([l, h]) => (
                 <Link key={l} href={h} className="text-text-secondary text-sm hover:text-white transition-colors">{l}</Link>
               ))}
             </div>
@@ -516,7 +419,6 @@ export default function LandingPage() {
       <FeaturesSection />
       <ContentPreviewSection />
       <MinistriesSection />
-      <PricingSection />
       <Footer />
     </div>
   );
