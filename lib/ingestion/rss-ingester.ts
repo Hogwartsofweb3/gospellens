@@ -96,9 +96,16 @@ export async function runRssIngestion() {
           const combinedBaseTags = [...(ministry.topic_tags || []), ...feedSpecificTags];
           const topicTags = autoTagContent(item.title, item.contentSnippet || "", combinedBaseTags);
 
-          // Strip HTML from descriptions to keep UI clean
-          const cleanDescription = item.contentSnippet 
-            ? sanitizeHtml(item.contentSnippet, { allowedTags: [], allowedAttributes: {} }) 
+          // Preserve safe HTML for in-app reading
+          const rawContent = (item as any)["content:encoded"] || item.content || item.contentSnippet || "";
+          const cleanDescription = rawContent 
+            ? sanitizeHtml(rawContent, { 
+                allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'h1', 'h2' ]),
+                allowedAttributes: {
+                  ...sanitizeHtml.defaults.allowedAttributes,
+                  'img': ['src', 'alt', 'width', 'height']
+                }
+              }) 
             : null;
 
           const durationSeconds = parseDuration(item.itunesDuration as string);
