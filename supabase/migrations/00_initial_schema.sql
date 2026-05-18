@@ -1,6 +1,11 @@
 -- Enable required extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Cleanup old Stripe/Premium fields if they exist from a previous run
+DROP TABLE IF EXISTS public.subscriptions CASCADE;
+ALTER TABLE IF EXISTS public.users DROP COLUMN IF EXISTS is_premium;
+ALTER TABLE IF EXISTS public.content DROP COLUMN IF EXISTS is_premium;
+
 -- 1. users
 CREATE TABLE IF NOT EXISTS public.users (
   id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -69,8 +74,7 @@ CREATE TABLE IF NOT EXISTS public.user_follows (
   PRIMARY KEY (user_id, ministry_id)
 );
 
-
--- 7. notifications
+-- 6. notifications
 CREATE TABLE IF NOT EXISTS public.notifications (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid REFERENCES public.users(id) ON DELETE CASCADE,
@@ -92,61 +96,74 @@ ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 -- RLS Policies
 
 -- users: users can only read/edit own row
+DROP POLICY IF EXISTS "Users can view own profile" ON public.users;
 CREATE POLICY "Users can view own profile" 
 ON public.users FOR SELECT 
 USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can update own profile" ON public.users;
 CREATE POLICY "Users can update own profile" 
 ON public.users FOR UPDATE 
 USING (auth.uid() = id);
 
 -- ministries: all authenticated users can read
+DROP POLICY IF EXISTS "Ministries are viewable by authenticated users" ON public.ministries;
 CREATE POLICY "Ministries are viewable by authenticated users" 
 ON public.ministries FOR SELECT 
 TO authenticated 
 USING (true);
 
 -- content: all authenticated users can read
+DROP POLICY IF EXISTS "Content is viewable by authenticated users" ON public.content;
 CREATE POLICY "Content is viewable by authenticated users" 
 ON public.content FOR SELECT 
 TO authenticated 
 USING (true);
 
 -- bookmarks: users can only CRUD own bookmarks
+DROP POLICY IF EXISTS "Users can view own bookmarks" ON public.bookmarks;
 CREATE POLICY "Users can view own bookmarks" 
 ON public.bookmarks FOR SELECT 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own bookmarks" ON public.bookmarks;
 CREATE POLICY "Users can insert own bookmarks" 
 ON public.bookmarks FOR INSERT 
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own bookmarks" ON public.bookmarks;
 CREATE POLICY "Users can delete own bookmarks" 
 ON public.bookmarks FOR DELETE 
 USING (auth.uid() = user_id);
 
 -- user_follows: users can only CRUD own follows
+DROP POLICY IF EXISTS "Users can view own follows" ON public.user_follows;
 CREATE POLICY "Users can view own follows" 
 ON public.user_follows FOR SELECT 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own follows" ON public.user_follows;
 CREATE POLICY "Users can insert own follows" 
 ON public.user_follows FOR INSERT 
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own follows" ON public.user_follows;
 CREATE POLICY "Users can delete own follows" 
 ON public.user_follows FOR DELETE 
 USING (auth.uid() = user_id);
 
 -- notifications: users can only CRUD own notifications
+DROP POLICY IF EXISTS "Users can view own notifications" ON public.notifications;
 CREATE POLICY "Users can view own notifications" 
 ON public.notifications FOR SELECT 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own notifications" ON public.notifications;
 CREATE POLICY "Users can update own notifications" 
 ON public.notifications FOR UPDATE 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own notifications" ON public.notifications;
 CREATE POLICY "Users can delete own notifications" 
 ON public.notifications FOR DELETE 
 USING (auth.uid() = user_id);
