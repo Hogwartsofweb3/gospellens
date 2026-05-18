@@ -6,12 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  User, BookOpen, Users, Heart, Bell, Sun, Moon,
-  LogOut, ChevronRight, Shield, FileText, HelpCircle,
-  Camera, Check, X, CheckCircle, UserPlus, Sparkles,
+  User, BookOpen, Users, Bell, Sun, Moon,
+  LogOut, Shield, FileText, HelpCircle,
+  Camera, Check, CheckCircle,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { SupportModal } from "@/components/ui/SupportModal";
+
 
 // ─── Types ────────────────────────────────────────────────
 interface UserProfile {
@@ -19,7 +19,6 @@ interface UserProfile {
   email: string;
   full_name: string | null;
   avatar_url: string | null;
-  is_premium: boolean;
   preferred_topics: string[];
 }
 
@@ -32,9 +31,8 @@ interface Ministry {
 }
 
 type Section =
-  | "profile" | "topics" | "follows" | "support"
-  | "notifications" | "appearance" | "privacy"
-  | "terms" | "help";
+  | "profile" | "topics" | "follows"
+  | "notifications" | "appearance";
 
 const ALL_TOPICS = [
   "Bible Study", "Theology", "Sermons", "Devotionals", "Prayer",
@@ -46,7 +44,6 @@ const NAV_ITEMS: { id: Section; label: string; icon: React.ReactNode; dividerAft
   { id: "profile", label: "My Profile", icon: <User size={16} /> },
   { id: "topics", label: "My Topics", icon: <BookOpen size={16} /> },
   { id: "follows", label: "Ministries I Follow", icon: <Users size={16} />, dividerAfter: true },
-  { id: "support", label: "Support Gospel Lens", icon: <Heart size={16} />, dividerAfter: true },
   { id: "notifications", label: "Notifications", icon: <Bell size={16} /> },
   { id: "appearance", label: "Appearance", icon: <Sun size={16} />, dividerAfter: true },
 ];
@@ -71,7 +68,7 @@ export default function ProfilePage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { router.push("/signin"); return; }
       const { data } = await supabase.from("users").select("*").eq("id", user.id).single();
-      setProfile(data || { id: user.id, email: user.email || "", full_name: null, avatar_url: null, is_premium: false, preferred_topics: [] });
+      setProfile(data || { id: user.id, email: user.email || "", full_name: null, avatar_url: null, preferred_topics: [] });
       setLoading(false);
     }
     loadProfile();
@@ -123,10 +120,8 @@ export default function ProfilePage() {
                 {profile?.full_name || "Gospel Lens User"}
               </p>
               <p className="text-text-secondary text-xs mt-0.5 font-inter">{profile?.email}</p>
-              <span className={`mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
-                profile?.is_premium ? "bg-primary text-white" : "bg-elevated text-text-secondary"
-              }`}>
-                {profile?.is_premium ? <><Sparkles size={11} /> Supporter ✦</> : "Free Member"}
+              <span className="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-elevated text-text-secondary">
+                Member
               </span>
             </div>
 
@@ -195,9 +190,6 @@ export default function ProfilePage() {
                 )}
                 {activeSection === "follows" && (
                   <FollowsSection />
-                )}
-                {activeSection === "support" && (
-                  <SupportSection profile={profile} />
                 )}
                 {activeSection === "notifications" && (
                   <NotificationsSection showToast={showToast} />
@@ -431,106 +423,6 @@ function FollowsSection() {
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-// ─── Support Section ───────────────────────────────────────
-function SupportSection({ profile }: { profile: UserProfile | null }) {
-  const supabase = createClient();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [portalLoading, setPortalLoading] = useState(false);
-
-  const openPortal = async () => {
-    if (!profile) return;
-    setPortalLoading(true);
-    const res = await fetch("/api/stripe/customer-portal", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: profile.id }),
-    });
-    const { url, error } = await res.json();
-    if (url) window.location.href = url;
-    else console.error(error);
-    setPortalLoading(false);
-  };
-
-  return (
-    <div>
-      <SupportModal open={modalOpen} onClose={() => setModalOpen(false)} />
-
-      <h2 className="font-poppins font-bold text-2xl text-white mb-2">Support Gospel Lens</h2>
-      <p className="text-text-secondary text-sm mb-6 max-w-lg">
-        Gospel Lens is completely free — all content comes from trusted ministries at no cost to us.
-        If this platform is a blessing to you, consider supporting us to keep the lights on. 🙏
-      </p>
-
-      {profile?.is_premium ? (
-        // ── Active Supporter ──────────────────────────────
-        <div className="bg-surface rounded-2xl border border-primary/40 p-6">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles size={18} className="text-primary" />
-            <h3 className="text-white font-poppins font-semibold">You are a Supporter ✦</h3>
-          </div>
-          <p className="text-text-secondary text-sm mb-5">
-            Thank you from the bottom of our hearts. Your support keeps Gospel Lens alive and free for everyone.
-          </p>
-          <div className="flex items-center gap-2 text-primary text-sm font-semibold mb-5">
-            <CheckCircle size={16} /> Active Supporter badge on your profile
-          </div>
-          <button
-            onClick={openPortal}
-            disabled={portalLoading}
-            className="px-5 py-2.5 rounded-full border border-elevated text-text-secondary hover:text-white hover:border-white/30 transition-colors text-sm disabled:opacity-60"
-          >
-            {portalLoading ? "Loading..." : "Manage Billing"}
-          </button>
-        </div>
-      ) : (
-        // ── Not yet a Supporter ───────────────────────────
-        <div className="space-y-4">
-          <div className="bg-surface rounded-2xl border border-elevated p-6">
-            <div className="flex items-center gap-2 mb-3">
-              <Heart size={18} className="text-primary" />
-              <h3 className="text-white font-poppins font-semibold">Make a Donation</h3>
-            </div>
-            <p className="text-text-secondary text-sm mb-4">
-              A one-time gift of any size helps cover server costs and new features.
-            </p>
-            <button
-              onClick={() => setModalOpen(true)}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary rounded-full text-white text-sm font-semibold hover:bg-primary/90 transition-colors"
-            >
-              <Heart size={14} /> Support Gospel Lens
-            </button>
-          </div>
-
-          <div className="bg-surface rounded-2xl border border-primary/30 p-6">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles size={18} className="text-primary" />
-              <h3 className="text-white font-poppins font-semibold">Become a Supporter</h3>
-              <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full font-semibold">$1.99/mo</span>
-            </div>
-            <p className="text-text-secondary text-sm mb-4">
-              Get a <strong className="text-primary">Supporter ✦</strong> badge and early access to new features.
-              All content stays free — forever.
-            </p>
-            <ul className="space-y-2 mb-5">
-              {["✦ Supporter badge on profile", "Early access to new features", "7-day free trial", "Our eternal gratitude 🙏"].map((f) => (
-                <li key={f} className="flex items-center gap-2 text-sm text-text-secondary">
-                  <Check size={14} className="text-primary flex-shrink-0" /> {f}
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={() => setModalOpen(true)}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary rounded-full text-white text-sm font-semibold hover:bg-primary/90 transition-colors"
-            >
-              <Sparkles size={14} /> Become a Supporter
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -27,14 +27,14 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              // Next.js needs unsafe-eval in dev; scripts from Stripe and PostHog
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' js.stripe.com *.posthog.com app.posthog.com",
-              // API connections to Supabase, Stripe, PostHog, Sentry, Upstash
-              "connect-src 'self' *.supabase.co *.supabase.in wss://*.supabase.co api.stripe.com *.sentry.io *.posthog.com app.posthog.com *.upstash.io",
+              // Next.js needs unsafe-eval in dev
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' *.posthog.com app.posthog.com",
+              // API connections to Supabase, PostHog, Sentry, Upstash
+              "connect-src 'self' *.supabase.co *.supabase.in wss://*.supabase.co *.sentry.io *.posthog.com app.posthog.com *.upstash.io",
               // Images from YouTube, Supabase Storage, CDNs
               "img-src 'self' data: blob: i.ytimg.com img.youtube.com *.supabase.co *.supabase.in *.amazonaws.com *.cloudfront.net *.googleapis.com",
-              // YouTube embeds and Stripe payment iframe
-              "frame-src 'self' *.youtube.com youtube.com *.stripe.com",
+              // YouTube embeds only
+              "frame-src 'self' *.youtube.com youtube.com",
               // Google Fonts
               "font-src 'self' fonts.gstatic.com fonts.googleapis.com",
               // Style from self and Google Fonts
@@ -61,7 +61,7 @@ const nextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(), payment=(self *.stripe.com)",
+            value: "camera=(), microphone=(), geolocation=(), payment=()",
           },
           {
             key: "Strict-Transport-Security",

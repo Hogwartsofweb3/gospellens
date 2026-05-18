@@ -39,83 +39,16 @@ const emailBase = (body: string) => `
 </body>
 </html>`;
 
-const pinkBtn = (text: string, href: string) =>
-  `<a href="${href}" style="display:inline-block;background:#E040A0;color:white;text-decoration:none;padding:14px 32px;border-radius:100px;font-size:15px;font-weight:600;margin-top:24px;">${text}</a>`;
-
-const h1 = (text: string) =>
-  `<h1 style="color:white;font-size:22px;font-weight:700;margin:0 0 12px;">${text}</h1>`;
-
-const p = (text: string) =>
-  `<p style="color:#9E9E9E;font-size:15px;line-height:1.7;margin:0 0 12px;">${text}</p>`;
-
-const check = (text: string) =>
-  `<li style="color:#E0E0E0;font-size:14px;line-height:1.8;list-style:none;padding:2px 0;">
-    <span style="color:#E040A0;margin-right:8px;">✓</span>${text}
-  </li>`;
+export const emailHelpers = {
+  btn: (text: string, href: string) =>
+    `<a href="${href}" style="display:inline-block;background:#E040A0;color:white;text-decoration:none;padding:14px 32px;border-radius:100px;font-size:15px;font-weight:600;margin-top:24px;">${text}</a>`,
+  h1: (text: string) =>
+    `<h1 style="color:white;font-size:22px;font-weight:700;margin:0 0 12px;">${text}</h1>`,
+  p: (text: string) =>
+    `<p style="color:#9E9E9E;font-size:15px;line-height:1.7;margin:0 0 12px;">${text}</p>`,
+  base: emailBase,
+};
 
 // ─── Templates ────────────────────────────────────────────────────────────────
-
-export function donationThankYouEmail(name: string, amount: string) {
-  return emailBase(`
-    <div style="text-align:center;margin-bottom:28px;">
-      <span style="font-size:48px;">🙏</span>
-    </div>
-    ${h1("Thank you for your gift!")}
-    ${p(`Dear ${name || "friend"},`)}
-    ${p(`Your generous donation of <strong style="color:white;">${amount}</strong> means the world to us. Gospel Lens is built with love to bring the best Christian content closer to believers everywhere — and gifts like yours keep it going.`)}
-    ${p("Every penny goes toward server costs, development, and making the platform better for the whole community.")}
-    <div style="text-align:center;">
-      ${pinkBtn("Back to Gospel Lens", process.env.NEXT_PUBLIC_APP_URL || "https://gospellens.app")}
-    </div>
-    <p style="color:#616161;font-size:13px;text-align:center;margin-top:24px;">May God bless you richly. 🙏</p>
-  `);
-}
-
-export function supporterWelcomeEmail(name: string) {
-  return emailBase(`
-    <div style="text-align:center;margin-bottom:28px;">
-      <span style="font-size:48px;">✦</span>
-    </div>
-    ${h1("Welcome, Supporter!")}
-    ${p(`Dear ${name || "friend"},`)}
-    ${p("You are now a Gospel Lens Supporter — thank you from the bottom of our hearts. Your Supporter ✦ badge is now active on your profile.")}
-    <ul style="margin:16px 0;padding:0;">
-      ${check("Supporter ✦ badge on your profile")}
-      ${check("Early access to new features")}
-      ${check("Priority feedback channel")}
-      ${check("The knowledge you're keeping the lights on 💡")}
-    </ul>
-    ${p("Remember — all content on Gospel Lens remains completely free for everyone. You're simply helping us do more of what we love.")}
-    <div style="text-align:center;">
-      ${pinkBtn("Go to My Profile", `${process.env.NEXT_PUBLIC_APP_URL}/profile`)}
-    </div>
-  `);
-}
-
-export function supporterCancelledEmail(name: string) {
-  return emailBase(`
-    ${h1("We'll miss you, Supporter.")}
-    ${p(`Dear ${name || "friend"},`)}
-    ${p("Your Gospel Lens Supporter subscription has been cancelled. Your Supporter badge will remain active until the end of your current billing period.")}
-    ${p("All content on Gospel Lens remains completely free — your access to everything won't change at all.")}
-    ${p("If you ever want to support us again, we'd be deeply grateful. 🙏")}
-    <div style="text-align:center;">
-      ${pinkBtn("Re-activate Support", `${process.env.NEXT_PUBLIC_APP_URL}/profile`)}
-    </div>
-  `);
-}
-
-export function paymentFailedEmail(name: string) {
-  return emailBase(`
-    <div style="text-align:center;margin-bottom:28px;">
-      <span style="font-size:48px;">⚠️</span>
-    </div>
-    ${h1("Payment failed")}
-    ${p(`Dear ${name || "friend"},`)}
-    ${p("We weren't able to process your Supporter payment. Please update your payment method to keep your Supporter badge active.")}
-    <div style="text-align:center;">
-      ${pinkBtn("Update Payment Method", `${process.env.NEXT_PUBLIC_APP_URL}/api/stripe/customer-portal`)}
-    </div>
-    ${p("If you have any questions, just reply to this email — we're happy to help.")}
-  `);
-}
+// Payment/donation templates have been removed — Gospel Lens has no premium tier.
+// Add future transactional email templates here (e.g. welcome email, weekly digest).
