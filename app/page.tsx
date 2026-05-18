@@ -306,6 +306,7 @@ const MINISTRY_LOGOS = [
   { name: "Bible Project", initials: "BP", color: "#38BDF8" },
   { name: "Apologia", initials: "AS", color: "#818CF8" },
   { name: "Wes Huff", initials: "WH", color: "#F472B6" },
+  { name: "TEC", initials: "TEC", color: "#FBBF24" },
   { name: "Gavin Ortlund", initials: "GO", color: "#FBBF24" },
 ];
 
