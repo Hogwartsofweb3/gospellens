@@ -28,7 +28,7 @@ export interface ContentItem {
 }
 
 // Map content type → internal route
-function getContentUrl(item: ContentItem): string {
+export function getContentUrl(item: ContentItem): string {
   switch (item.content_type) {
     case "article":
       return `/article/${item.id}`;

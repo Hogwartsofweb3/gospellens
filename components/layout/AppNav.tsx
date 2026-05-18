@@ -10,7 +10,6 @@ import { NotificationsDropdown } from "@/components/ui/NotificationsDropdown";
 
 const NAV_LINKS = [
   { href: "/home", label: "Home" },
-  { href: "/discover", label: "Discover" },
   { href: "/search", label: "Search" },
   { href: "/bookmarks", label: "Bookmarks" },
 ];

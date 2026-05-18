@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Play, Bookmark, ChevronLeft, ChevronRight } from "lucide-react";
 import { ScrollRow } from "@/components/ui/ScrollRow";
-import { LandscapeCard, SquareCard, MinistryWideCard, ContentItem } from "@/components/ui/ContentCard";
+import { LandscapeCard, SquareCard, MinistryWideCard, ContentItem, getContentUrl } from "@/components/ui/ContentCard";
 import { LandscapeCardSkeleton, SquareCardSkeleton, HeroSkeleton } from "@/components/ui/Skeletons";
 
 // ── Hero Banner ───────────────────────────────────────────────────────────
@@ -88,9 +88,7 @@ function HeroBanner({ item }: { item: ContentItem | null }) {
           {/* Actions */}
           <div className="flex items-center gap-3">
             <Link
-              href={item.source_url}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={getContentUrl(item)}
               className="flex items-center gap-2 px-6 py-2.5 bg-primary rounded-pill text-white font-semibold text-sm hover:bg-primary/90 transition-colors shadow-glow-pink"
             >
               <Play className="w-4 h-4 fill-white" />

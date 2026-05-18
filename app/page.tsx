@@ -179,7 +179,7 @@ const FEATURES = [
     icon: Video,
     emoji: "🎬",
     title: "Sermons & Videos",
-    desc: "Full-length sermon videos and teaching series from Elevation Church, Grace to You, and other leading ministries.",
+    desc: "Full-length sermon videos and teaching series from Grace to You, Apologia Studios, and other leading ministries.",
   },
 ];
 
@@ -223,7 +223,7 @@ const PREVIEW_CARDS = [
   { title: "How to Pray with Power", ministry: "TGC", type: "VIDEO", gradient: "from-purple-900/40 to-transparent" },
   { title: "Grace Greater Than Our Sin", ministry: "Grace to You", type: "SERMON", gradient: "from-emerald-900/40 to-transparent" },
   { title: "The Holiness of God", ministry: "Ligonier", type: "PODCAST", gradient: "from-amber-900/40 to-transparent" },
-  { title: "Why Worship Matters", ministry: "Elevation Church", type: "VIDEO", gradient: "from-rose-900/40 to-transparent" },
+  { title: "Why Does God Allow Evil?", ministry: "Apologia", type: "VIDEO", gradient: "from-rose-900/40 to-transparent" },
 ];
 
 function ContentPreviewSection() {
@@ -303,7 +303,6 @@ const MINISTRY_LOGOS = [
   { name: "TGC", initials: "TGC", color: "#29B6F6" },
   { name: "Ligonier", initials: "LM", color: "#A78BFA" },
   { name: "Grace to You", initials: "GTY", color: "#34D399" },
-  { name: "Elevation", initials: "EC", color: "#FB923C" },
   { name: "Bible Project", initials: "BP", color: "#38BDF8" },
   { name: "Apologia", initials: "AS", color: "#818CF8" },
   { name: "Wes Huff", initials: "WH", color: "#F472B6" },
