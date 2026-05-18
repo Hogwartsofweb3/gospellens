@@ -37,11 +37,28 @@ export async function GET(req: Request) {
       .from("content")
       .select("*, ministries(name, logo_url, slug, is_verified)", { count: "exact" });
 
-    // Full-text search
+    // Full-text search including ministry names
     if (search) {
-      query = query.or(
-        `title.ilike.%${search}%,description.ilike.%${search}%`
-      );
+      // First, find if the search term matches any ministry names
+      const { data: matchingMinistries } = await supabase
+        .from("ministries")
+        .select("id")
+        .ilike("name", `%${search}%`);
+
+      const ministryIds = matchingMinistries?.map(m => m.id) || [];
+
+      if (ministryIds.length > 0) {
+        // If we found matching ministries, return content from those ministries OR matching content
+        const idsString = ministryIds.map(id => `"${id}"`).join(','); // Wrap UUIDs in quotes for PostgREST .in.()
+        query = query.or(
+          `title.ilike.%${search}%,description.ilike.%${search}%,ministry_id.in.(${idsString})`
+        );
+      } else {
+        // Otherwise just search content title/description
+        query = query.or(
+          `title.ilike.%${search}%,description.ilike.%${search}%`
+        );
+      }
     }
 
     // Apply Filters
