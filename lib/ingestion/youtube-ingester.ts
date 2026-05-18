@@ -145,7 +145,6 @@ export async function runYouTubeIngestion() {
           duration_seconds: videoDurations[videoId] || null,
           published_at: snippet.publishedAt || new Date().toISOString(),
           topic_tags: topicTags,
-          is_premium: false,
         };
 
         // Upsert using source_url constraint to avoid duplicates

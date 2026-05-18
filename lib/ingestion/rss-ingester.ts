@@ -113,7 +113,6 @@ export async function runRssIngestion() {
             duration_seconds: durationSeconds,
             published_at: item.isoDate || item.pubDate ? new Date(item.isoDate || item.pubDate!).toISOString() : new Date().toISOString(),
             topic_tags: topicTags,
-            is_premium: false, // Default
           };
 
           // Upsert using source_url constraint to avoid duplicates
