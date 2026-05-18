@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS public.users (
   full_name text,
   avatar_url text,
   auth_provider text,
-  is_premium boolean DEFAULT false,
   preferred_topics text[] DEFAULT '{}',
   created_at timestamptz DEFAULT now()
 );
@@ -49,7 +48,6 @@ CREATE TABLE IF NOT EXISTS public.content (
   duration_seconds integer,
   published_at timestamptz,
   topic_tags text[] DEFAULT '{}',
-  is_premium boolean DEFAULT false,
   view_count integer DEFAULT 0,
   created_at timestamptz DEFAULT now()
 );
@@ -71,18 +69,6 @@ CREATE TABLE IF NOT EXISTS public.user_follows (
   PRIMARY KEY (user_id, ministry_id)
 );
 
--- 6. subscriptions
-CREATE TABLE IF NOT EXISTS public.subscriptions (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id uuid REFERENCES public.users(id) ON DELETE CASCADE,
-  stripe_customer_id text UNIQUE,
-  stripe_subscription_id text UNIQUE,
-  plan text CHECK (plan IN ('free', 'premium')),
-  status text CHECK (status IN ('active', 'cancelled', 'past_due', 'trialing')),
-  trial_ends_at timestamptz,
-  current_period_end timestamptz,
-  created_at timestamptz DEFAULT now()
-);
 
 -- 7. notifications
 CREATE TABLE IF NOT EXISTS public.notifications (
@@ -101,7 +87,6 @@ ALTER TABLE public.ministries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.content ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.bookmarks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_follows ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
@@ -151,11 +136,6 @@ WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can delete own follows" 
 ON public.user_follows FOR DELETE 
-USING (auth.uid() = user_id);
-
--- subscriptions: users can only read own subscriptions
-CREATE POLICY "Users can view own subscriptions" 
-ON public.subscriptions FOR SELECT 
 USING (auth.uid() = user_id);
 
 -- notifications: users can only CRUD own notifications
