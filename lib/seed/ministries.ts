@@ -23,7 +23,7 @@ const MINISTRIES_SEED = [
     name: "Desiring God",
     slug: "desiring-god",
     website: "https://www.desiringgod.org",
-    rss_feed_urls: ["https://rss.app/feeds/d0yuxqKF7IDDJQCi.xml"],
+    rss_feed_urls: ["https://rss.desiringgod.org"],
     youtube_channel_id: "UCnrFlpro0xfYjz6s5Xa8WWw",
     category: "Reformed Theology",
     description: "Desiring God exists to spread a passion for the supremacy of God in all things for the joy of all peoples through Jesus Christ. Founded by John Piper.",
@@ -34,7 +34,7 @@ const MINISTRIES_SEED = [
     name: "The Gospel Coalition",
     slug: "the-gospel-coalition",
     website: "https://www.thegospelcoalition.org",
-    rss_feed_urls: ["https://rss.app/feeds/Q7pyEiyc40rd2LZ3.xml"],
+    rss_feed_urls: ["https://www.thegospelcoalition.org/feed/"],
     youtube_channel_id: "UCQMwm-DeHyFK5VPp6KySR5Q",
     category: "Reformed Evangelical",
     description: "The Gospel Coalition is a fellowship of evangelical churches deeply committed to renewing our faith in the gospel of Christ.",
@@ -45,10 +45,7 @@ const MINISTRIES_SEED = [
     name: "Ligonier Ministries",
     slug: "ligonier-ministries",
     website: "https://learn.ligonier.org",
-    rss_feed_urls: [
-      "https://rss.app/feeds/r1ABLRDvACcJDKzb.xml", // Articles
-      "https://rss.app/feeds/wJUVnz85sjSeAYuw.xml"  // Q&A
-    ],
+    rss_feed_urls: [],
     youtube_channel_id: "UCut8939DdQsJI3Gw1ziAc4w",
     category: "Reformed Theology",
     description: "Founded by R.C. Sproul, Ligonier Ministries exists to proclaim the holiness of God to a generation seeking spiritual renewal.",
@@ -59,7 +56,7 @@ const MINISTRIES_SEED = [
     name: "Monergism",
     slug: "monergism",
     website: "https://www.monergism.com",
-    rss_feed_urls: ["https://rss.app/feeds/U6p64uYqnKbhhFqZ.xml"],
+    rss_feed_urls: ["https://www.monergism.com/blog/feed"],
     category: "Reformed Theology",
     description: "Monergism is a comprehensive resource for Reformed and evangelical theology, featuring sermons, articles, and books from trusted Christian scholars.",
     is_verified: true,
@@ -69,10 +66,7 @@ const MINISTRIES_SEED = [
     name: "New Advent",
     slug: "new-advent",
     website: "https://www.newadvent.org",
-    rss_feed_urls: [
-      "https://rss.app/feeds/G9D8sZVL8eWQ0Mru.xml", // Church Fathers
-      "https://rss.app/feeds/igOzEk5SPtCfnFBO.xml"  // Summa Theologica
-    ],
+    rss_feed_urls: [],
     category: "Church History & Patristics",
     description: "New Advent provides access to the writings of the Early Church Fathers and the Summa Theologica of St. Thomas Aquinas.",
     is_verified: true,
@@ -82,7 +76,7 @@ const MINISTRIES_SEED = [
     name: "Grace to You",
     slug: "grace-to-you",
     website: "https://www.gty.org",
-    rss_feed_urls: ["https://rss.app/feeds/NkXsEO38Sv8eZDoW.xml"],
+    rss_feed_urls: [],
     youtube_channel_id: "UCneKpMu9SFGlt2usTdAI75A",
     category: "Expository Preaching",
     description: "Grace to You is the media ministry of John MacArthur, featuring thousands of sermons and Bible teaching resources.",
@@ -93,7 +87,7 @@ const MINISTRIES_SEED = [
     name: "Gospel Lens",
     slug: "gospel-lens-substack",
     website: "https://gospellens.substack.com",
-    rss_feed_urls: ["https://rss.app/feeds/o2LbGMkNkXIZcYC5.xml"],
+    rss_feed_urls: ["https://gospellens.substack.com/feed"],
     category: "Gospel Lens Original",
     description: "Original articles, reflections, and devotionals published directly by the Gospel Lens team.",
     is_verified: true,
