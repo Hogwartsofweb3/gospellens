@@ -215,15 +215,19 @@ export default function SearchPage() {
                   Try a different keyword or browse topics
                 </p>
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {TOPICS.map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => setQuery(t.id)}
-                      className="px-4 py-1.5 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-sm hover:bg-secondary/20 transition-colors"
-                    >
-                      {t.icon} {t.id}
-                    </button>
-                  ))}
+                  {TOPICS.map((t) => {
+                    const TopicIcon = t.Icon;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => setQuery(t.id)}
+                        className="flex items-center gap-2 px-4 py-1.5 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-sm hover:bg-secondary/20 transition-colors"
+                      >
+                        <TopicIcon size={14} style={{ color: t.color }} />
+                        {t.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
