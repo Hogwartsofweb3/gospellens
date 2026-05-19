@@ -88,12 +88,20 @@ export async function runYouTubeIngestion() {
       let nextPageToken: string | undefined = undefined;
 
       for (let page = 0; page < 4; page++) {
-        const playlistRes = await youtube.playlistItems.list({
+        // Build params separately to avoid TS7022 circular type inference
+        const params: {
+          part: string[];
+          playlistId: string;
+          maxResults: number;
+          pageToken?: string;
+        } = {
           part: ["snippet"],
           playlistId: uploadsPlaylistId,
           maxResults: 50,
-          pageToken: nextPageToken,
-        });
+        };
+        if (nextPageToken) params.pageToken = nextPageToken;
+
+        const playlistRes = await youtube.playlistItems.list(params);
 
         if (playlistRes.data.items) {
           allVideoItems.push(...playlistRes.data.items);
