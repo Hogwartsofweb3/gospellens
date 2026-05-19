@@ -299,15 +299,14 @@ function ContentPreviewSection() {
 
 // ── Ministries ────────────────────────────────────────────────────────────
 const MINISTRY_LOGOS = [
-  { name: "Desiring God", initials: "DG", color: "#E040A0" },
-  { name: "TGC", initials: "TGC", color: "#29B6F6" },
-  { name: "Ligonier", initials: "LM", color: "#A78BFA" },
-  { name: "Grace to You", initials: "GTY", color: "#34D399" },
-  { name: "Bible Project", initials: "BP", color: "#38BDF8" },
-  { name: "Apologia", initials: "AS", color: "#818CF8" },
-  { name: "Wes Huff", initials: "WH", color: "#F472B6" },
-  { name: "TEC", initials: "TEC", color: "#FBBF24" },
-  { name: "Gavin Ortlund", initials: "GO", color: "#FBBF24" },
+  { name: "Desiring God", logoUrl: "https://logo.clearbit.com/desiringgod.org", color: "#E040A0" },
+  { name: "The Gospel Coalition", logoUrl: "https://logo.clearbit.com/thegospelcoalition.org", color: "#29B6F6" },
+  { name: "Ligonier", logoUrl: "https://logo.clearbit.com/ligonier.org", color: "#A78BFA" },
+  { name: "Grace to You", logoUrl: "https://logo.clearbit.com/gty.org", color: "#34D399" },
+  { name: "Bible Project", logoUrl: "https://logo.clearbit.com/bibleproject.com", color: "#38BDF8" },
+  { name: "Apologia Studios", logoUrl: "https://logo.clearbit.com/apologiastudios.com", color: "#818CF8" },
+  { name: "Gospel in Life", logoUrl: "https://logo.clearbit.com/gospelinlife.com", color: "#FBBF24" },
+  { name: "Monergism", logoUrl: "https://logo.clearbit.com/monergism.com", color: "#F472B6" },
 ];
 
 function MinistriesSection() {
@@ -332,15 +331,16 @@ function MinistriesSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.06 }}
-              className="group flex flex-col items-center gap-2 flex-shrink-0"
+              className="group flex flex-col items-center gap-3 flex-shrink-0"
             >
               <div
-                className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xs border border-border group-hover:shadow-glow-pink group-hover:border-primary/50 transition-all"
-                style={{ backgroundColor: `${m.color}20` }}
+                className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center bg-surface border border-border group-hover:shadow-glow-pink group-hover:border-primary/50 transition-all p-1"
               >
-                <span style={{ color: m.color }}>{m.initials}</span>
+                <img src={m.logoUrl} alt={m.name} className="w-full h-full object-contain rounded-full" onError={(e) => {
+                  (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=242424&color=fff`;
+                }} />
               </div>
-              <span className="text-text-secondary text-xs text-center max-w-[70px]">{m.name}</span>
+              <span className="text-text-secondary text-xs text-center max-w-[80px] font-medium leading-tight">{m.name}</span>
             </motion.div>
           ))}
         </div>
@@ -353,57 +353,66 @@ function MinistriesSection() {
 // ── Footer ────────────────────────────────────────────────────────────────
 function Footer() {
   return (
-    <footer className="py-16 px-6 md:px-12 border-t border-border">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-12">
-          <div className="max-w-xs">
+    <footer className="pt-20 pb-10 px-6 md:px-12 bg-[#121212] border-t border-border mt-12">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-16">
+          {/* Brand Column */}
+          <div className="lg:col-span-2">
             <GospelLensLogo size={36} />
-            <p className="text-text-secondary text-sm mt-4 leading-relaxed">
-              Every trusted Christian voice. One place.
+            <p className="text-text-secondary text-sm mt-5 max-w-sm leading-relaxed">
+              Every trusted Christian voice. One place. We curate the best sermons, articles, and podcasts from faithful ministries around the globe.
             </p>
-            <p className="text-text-muted text-xs mt-2 italic">In God's Light, We See Light</p>
+            <p className="text-primary text-sm mt-3 italic font-medium">In God's Light, We See Light</p>
           </div>
 
-          <div className="flex gap-16">
-            <div className="flex flex-col gap-3">
-              <p className="text-white text-sm font-semibold mb-1">Product</p>
-              {[["Features", "#features"], ["Sign In", "/signin"], ["Get Started", "/signup"]].map(([l, h]) => (
-                <Link key={l} href={h} className="text-text-secondary text-sm hover:text-white transition-colors">{l}</Link>
-              ))}
-            </div>
-            <div className="flex flex-col gap-3">
-              <p className="text-white text-sm font-semibold mb-1">Legal</p>
-              {[["Privacy Policy", "/privacy-policy"], ["Terms of Service", "/terms"]].map(([l, h]) => (
-                <Link key={l} href={h} className="text-text-secondary text-sm hover:text-white transition-colors">{l}</Link>
-              ))}
-            </div>
+          {/* Links Columns */}
+          <div>
+            <p className="text-white text-sm font-semibold mb-5 uppercase tracking-wider">Content</p>
+            <ul className="flex flex-col gap-3">
+              <li><Link href="/home" className="text-text-secondary hover:text-white transition-colors text-sm">Sermons & Videos</Link></li>
+              <li><Link href="/home" className="text-text-secondary hover:text-white transition-colors text-sm">Podcasts & Audio</Link></li>
+              <li><Link href="/home" className="text-text-secondary hover:text-white transition-colors text-sm">Articles & Text</Link></li>
+              <li><Link href="/search" className="text-text-secondary hover:text-white transition-colors text-sm">Browse by Topic</Link></li>
+            </ul>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <p className="text-white text-sm font-semibold">Follow us</p>
-            <div className="flex gap-3">
-              {/* X / Twitter */}
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-elevated flex items-center justify-center text-text-secondary hover:text-primary hover:bg-primary/10 transition-all" aria-label="Twitter">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              </a>
-              {/* Instagram */}
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-elevated flex items-center justify-center text-text-secondary hover:text-primary hover:bg-primary/10 transition-all" aria-label="Instagram">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-              </a>
-              {/* YouTube */}
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-elevated flex items-center justify-center text-text-secondary hover:text-primary hover:bg-primary/10 transition-all" aria-label="YouTube">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-              </a>
-            </div>
+          <div>
+            <p className="text-white text-sm font-semibold mb-5 uppercase tracking-wider">Product</p>
+            <ul className="flex flex-col gap-3">
+              <li><Link href="/signin" className="text-text-secondary hover:text-white transition-colors text-sm">Sign In</Link></li>
+              <li><Link href="/signup" className="text-text-secondary hover:text-white transition-colors text-sm">Create Account</Link></li>
+              <li><a href="mailto:hello@gospellens.app" className="text-text-secondary hover:text-white transition-colors text-sm">Contact Us</a></li>
+              <li><a href="mailto:hello@gospellens.app" className="text-text-secondary hover:text-white transition-colors text-sm">Suggest a Ministry</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-white text-sm font-semibold mb-5 uppercase tracking-wider">Legal</p>
+            <ul className="flex flex-col gap-3">
+              <li><Link href="/privacy-policy" className="text-text-secondary hover:text-white transition-colors text-sm">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="text-text-secondary hover:text-white transition-colors text-sm">Terms of Service</Link></li>
+              <li><span className="text-text-muted text-sm cursor-not-allowed">Cookie Policy</span></li>
+            </ul>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-border">
-          <p className="text-text-muted text-xs">© {new Date().getFullYear()} Gospel Lens. All rights reserved.</p>
-          <p className="text-text-muted text-xs">Built with ♥ for the body of Christ</p>
+        {/* Bottom Bar */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-border">
+          <div className="flex items-center gap-4 text-xs">
+            <span className="text-text-muted">© {new Date().getFullYear()} Gospel Lens.</span>
+            <span className="text-text-muted hidden md:inline">·</span>
+            <span className="text-text-muted">All rights reserved.</span>
+            <span className="text-text-muted hidden md:inline">·</span>
+            <span className="text-text-muted">Built with ♥ for the body of Christ</span>
+          </div>
+
+          <div className="flex gap-4">
+            {/* X / Twitter */}
+            <a href="https://x.com/gospel_lenss" target="_blank" rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-elevated border border-border flex items-center justify-center text-text-secondary hover:text-white hover:border-primary/50 transition-all group" aria-label="X (Twitter)">
+              <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
         </div>
       </div>
     </footer>

@@ -2,7 +2,6 @@ import { createClient } from "@supabase/supabase-js";
 import * as dotenv from "dotenv";
 import path from "path";
 
-// Load environment variables from .env.local
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -17,40 +16,48 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const MINISTRIES_SEED = [
   // ==========================================
-  // ARTICLE / TEXT SOURCES
+  // ARTICLE + PODCAST RSS SOURCES
   // ==========================================
   {
     name: "Desiring God",
     slug: "desiring-god",
     website: "https://www.desiringgod.org",
-    rss_feed_urls: ["https://rss.desiringgod.org"],
+    rss_feed_urls: [
+      "https://rss.desiringgod.org",                                    // Articles
+      "https://www.desiringgod.org/podcasts/ask-pastor-john.rss",       // Ask Pastor John Podcast
+    ],
     youtube_channel_id: "UCnrFlpro0xfYjz6s5Xa8WWw",
     category: "Reformed Theology",
     description: "Desiring God exists to spread a passion for the supremacy of God in all things for the joy of all peoples through Jesus Christ. Founded by John Piper.",
     is_verified: true,
-    topic_tags: ["Bible Study", "Sermons", "Devotionals", "Prayer", "Worship"]
+    topic_tags: ["Bible Study", "Sermons", "Devotionals", "Prayer", "Worship"],
   },
   {
     name: "The Gospel Coalition",
     slug: "the-gospel-coalition",
     website: "https://www.thegospelcoalition.org",
-    rss_feed_urls: ["https://www.thegospelcoalition.org/feed/"],
+    rss_feed_urls: [
+      "https://www.thegospelcoalition.org/feed/",    // Articles
+      "https://feeds.simplecast.com/96_xs9dX",       // TGC Podcast
+    ],
     youtube_channel_id: "UCQMwm-DeHyFK5VPp6KySR5Q",
     category: "Reformed Evangelical",
     description: "The Gospel Coalition is a fellowship of evangelical churches deeply committed to renewing our faith in the gospel of Christ.",
     is_verified: true,
-    topic_tags: ["Bible Study", "Theology", "Evangelism", "Leadership", "Family & Marriage"]
+    topic_tags: ["Bible Study", "Theology", "Evangelism", "Leadership", "Family & Marriage"],
   },
   {
     name: "Ligonier Ministries",
     slug: "ligonier-ministries",
     website: "https://learn.ligonier.org",
-    rss_feed_urls: [],
+    rss_feed_urls: [
+      "https://renewingyourmind.ligonier.org/",   // Renewing Your Mind Podcast
+    ],
     youtube_channel_id: "UCut8939DdQsJI3Gw1ziAc4w",
     category: "Reformed Theology",
     description: "Founded by R.C. Sproul, Ligonier Ministries exists to proclaim the holiness of God to a generation seeking spiritual renewal.",
     is_verified: true,
-    topic_tags: ["Theology", "Bible Study", "Devotionals", "Healing & Miracles", "Leadership"]
+    topic_tags: ["Theology", "Bible Study", "Devotionals", "Healing & Miracles", "Leadership"],
   },
   {
     name: "Monergism",
@@ -60,7 +67,7 @@ const MINISTRIES_SEED = [
     category: "Reformed Theology",
     description: "Monergism is a comprehensive resource for Reformed and evangelical theology, featuring sermons, articles, and books from trusted Christian scholars.",
     is_verified: true,
-    topic_tags: ["Theology", "Bible Study", "Sermons", "Evangelism"]
+    topic_tags: ["Theology", "Bible Study", "Sermons", "Evangelism"],
   },
   {
     name: "New Advent",
@@ -70,18 +77,34 @@ const MINISTRIES_SEED = [
     category: "Church History & Patristics",
     description: "New Advent provides access to the writings of the Early Church Fathers and the Summa Theologica of St. Thomas Aquinas.",
     is_verified: true,
-    topic_tags: ["Church History", "Theology", "Bible Study", "Leadership"]
+    topic_tags: ["Church History", "Theology", "Bible Study", "Leadership"],
   },
   {
     name: "Grace to You",
     slug: "grace-to-you",
     website: "https://www.gty.org",
-    rss_feed_urls: [],
+    rss_feed_urls: [
+      "https://feeds.gty.org/gty/radio",   // Grace to You Radio Podcast (John MacArthur)
+    ],
     youtube_channel_id: "UCneKpMu9SFGlt2usTdAI75A",
     category: "Expository Preaching",
     description: "Grace to You is the media ministry of John MacArthur, featuring thousands of sermons and Bible teaching resources.",
     is_verified: true,
-    topic_tags: ["Sermons", "Bible Study", "Theology", "Prayer", "Family & Marriage"]
+    topic_tags: ["Sermons", "Bible Study", "Theology", "Prayer", "Family & Marriage"],
+  },
+  {
+    name: "Gospel in Life",
+    slug: "gospel-in-life",
+    website: "https://gospelinlife.com",
+    rss_feed_urls: [
+      "https://feeds.podbean.com/gospelinlife/feed.xml",  // Timothy Keller Sermons Podcast
+    ],
+    youtube_channel_id: "UCQmUmqrMGfnesNpdL7T282Q",
+    category: "Gospel & Preaching",
+    description: "Gospel in Life is the teaching ministry of Tim Keller featuring sermons, talks, and resources on the gospel and the Christian life.",
+    is_verified: true,
+    is_featured: true,
+    topic_tags: ["Sermons", "Theology", "Gospel", "Bible Study", "Prayer", "Evangelism"],
   },
   {
     name: "Gospel Lens",
@@ -92,14 +115,34 @@ const MINISTRIES_SEED = [
     description: "Original articles, reflections, and devotionals published directly by the Gospel Lens team.",
     is_verified: true,
     is_featured: true,
-    topic_tags: ["Devotionals", "Worship", "Evangelism", "Prayer"]
+    topic_tags: ["Devotionals", "Worship", "Evangelism", "Prayer"],
   },
-  
-  // ==========================================
-  // YOUTUBE VIDEO SOURCES 
-  // (Note: Shared channels are mapped above)
-  // ==========================================
 
+  // ==========================================
+  // YOUTUBE VIDEO SOURCES
+  // ==========================================
+  {
+    name: "TEC - This Excellent Church",
+    slug: "this-excellent-church",
+    youtube_channel_id: "UC8rO2XrlhZfL4s7O4RUDUBQ",
+    category: "Church Ministry",
+    description: "This Excellent Church is a growing church dedicated to raising excellent believers through the teaching of God's Word.",
+    is_verified: true,
+    topic_tags: ["Sermons", "Bible Study", "Worship", "Faith"],
+  },
+  {
+    name: "Judah Olorunmaiye",
+    slug: "judah-olorunmaiye",
+    website: "https://www.youtube.com/@JudahOlorunmaiye",
+    youtube_channel_id: "UC-8oHdlk6OMhHkoX5CWZJSw",
+    rss_feed_urls: [
+      "https://rsshub.app/telegram/channel/judahmaiye",  // Telegram audio teachings
+    ],
+    category: "Prophetic & Apostolic",
+    description: "A man called by God to compel consecration, provoke repentance and inspire worship through the preaching and teaching of God's Word.",
+    is_verified: true,
+    topic_tags: ["Sermons", "Prophecy", "Prayer", "Worship", "Healing & Miracles", "Evangelism"],
+  },
 
   // ==========================================
   // PODCAST / AUDIO SOURCES (YouTube Channels)
@@ -112,7 +155,7 @@ const MINISTRIES_SEED = [
     description: "The Bible Project creates free resources to help people experience the Bible as a unified story that leads to Jesus.",
     is_verified: true,
     display_as: "podcast",
-    topic_tags: ["Bible Study", "Theology", "Worship", "Youth & Teens", "Evangelism"]
+    topic_tags: ["Bible Study", "Theology", "Worship", "Youth & Teens", "Evangelism"],
   },
   {
     name: "Apologia Studios",
@@ -122,7 +165,7 @@ const MINISTRIES_SEED = [
     description: "Apologia Studios is a Reformed Baptist ministry dedicated to defending the Christian faith through apologetics and sound theology.",
     is_verified: true,
     display_as: "podcast",
-    topic_tags: ["Theology", "Evangelism", "Bible Study", "Leadership"]
+    topic_tags: ["Theology", "Evangelism", "Bible Study", "Leadership"],
   },
   {
     name: "Wes Huff",
@@ -132,7 +175,7 @@ const MINISTRIES_SEED = [
     description: "Wes Huff is a Christian apologist and speaker helping believers defend their faith with confidence and clarity.",
     is_verified: true,
     display_as: "podcast",
-    topic_tags: ["Evangelism", "Theology", "Youth & Teens", "Leadership"]
+    topic_tags: ["Evangelism", "Theology", "Youth & Teens", "Leadership"],
   },
   {
     name: "Gavin Ortlund",
@@ -142,8 +185,8 @@ const MINISTRIES_SEED = [
     description: "Gavin Ortlund is a theologian, author, and pastor exploring Christian doctrine with depth, warmth, and accessibility.",
     is_verified: true,
     display_as: "podcast",
-    topic_tags: ["Theology", "Bible Study", "Sermons", "Leadership", "Evangelism"]
-  }
+    topic_tags: ["Theology", "Bible Study", "Sermons", "Leadership", "Evangelism"],
+  },
 ];
 
 async function seedMinistries() {

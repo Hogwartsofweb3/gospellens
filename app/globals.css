@@ -2,6 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Theme Tokens (Dark Mode Default) ───────────────────────────────────── */
+:root {
+  --color-bg: #0F0F0F;
+  --color-surface: #1A1A1A;
+  --color-elevated: #242424;
+  --color-border: #2A2A2A;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #AAAAAA;
+  --color-text-muted: #555555;
+}
+
+/* ─── Light Mode Overrides ────────────────────────────────────────────────── */
+.light-mode {
+  --color-bg: #F0F4F8;
+  --color-surface: #FFFFFF;
+  --color-elevated: #E2E8F0;
+  --color-border: #CBD5E0;
+  --color-text-primary: #1A202C;
+  --color-text-secondary: #4A5568;
+  --color-text-muted: #718096;
+}
+
+.light-mode body {
+  color: var(--color-text-primary);
+}
+
 @layer base {
   body {
     @apply bg-background text-white antialiased;

@@ -76,7 +76,8 @@ export default function ProfilePage() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push("/");
+    router.push("/signin");
+    router.refresh();
   };
 
   if (loading) {
@@ -154,6 +155,8 @@ export default function ProfilePage() {
                   <a
                     key={link.href}
                     href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-full flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors"
                   >
                     {link.icon} {link.label}
@@ -472,14 +475,23 @@ function NotificationsSection({ showToast }: { showToast: (msg: string) => void 
   );
 }
 
-// ─── Appearance Section ────────────────────────────────────
+// ─── Appearance Section ────────────────────────────────────────────────
 function AppearanceSection({ showToast }: { showToast: (msg: string) => void }) {
   const [isDark, setIsDark] = useState(true);
+
+  // Load saved preference on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("gl-theme");
+    const prefersDark = saved !== "light";
+    setIsDark(prefersDark);
+    document.documentElement.classList.toggle("light-mode", !prefersDark);
+  }, []);
 
   const toggle = () => {
     setIsDark((prev) => {
       const next = !prev;
       document.documentElement.classList.toggle("light-mode", !next);
+      localStorage.setItem("gl-theme", next ? "dark" : "light");
       showToast(next ? "Dark mode enabled" : "Light mode enabled");
       return next;
     });
@@ -495,12 +507,12 @@ function AppearanceSection({ showToast }: { showToast: (msg: string) => void }) 
             {isDark ? "Dark Mode" : "Light Mode"}
           </p>
           <p className="text-text-secondary text-xs mt-0.5">
-            {isDark ? "Gospel Lens is optimised for dark mode. Recommended." : "Light mode uses a white background."}
+            {isDark ? "Gospel Lens is optimised for dark mode. Recommended." : "Light mode uses a lighter background."}
           </p>
         </div>
         <button
           onClick={toggle}
-          className={`relative flex-shrink-0 w-10 h-6 rounded-full transition-colors ${isDark ? "bg-primary" : "bg-elevated"}`}
+          className={`relative flex-shrink-0 w-10 h-6 rounded-full transition-colors ${isDark ? "bg-primary" : "bg-elevated border border-border"}`}
         >
           <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${isDark ? "translate-x-5" : "translate-x-1"}`} />
         </button>

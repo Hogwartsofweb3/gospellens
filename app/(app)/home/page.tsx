@@ -134,13 +134,32 @@ export default function HomePage() {
         const podcastItems: ContentItem[] = podcastsData.data || [];
         const videoItems: ContentItem[] = videosData.data || [];
 
+        // Pick hero item: highest view count video from the current week that HAS a thumbnail
+        const now = new Date();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        
+        let bestHero = trendingItems.find(
+          (item) => item.content_type === "video" && item.thumbnail_url && new Date(item.published_at || 0) >= oneWeekAgo
+        );
+
+        // Fallback: highest view count video of all time that HAS a thumbnail
+        if (!bestHero) {
+          bestHero = trendingItems.find((item) => item.content_type === "video" && item.thumbnail_url);
+        }
+        
+        // Final fallback: any trending item
+        if (!bestHero && trendingItems.length > 0) {
+          bestHero = trendingItems[0];
+        }
+
         setTrending(trendingItems);
         setArticles(articleItems);
         setPodcasts(podcastItems);
         setVideos(videoItems);
 
-        // Hero: pick top trending item
-        setHeroItem(trendingItems[0] || articleItems[0] || null);
+        if (bestHero) {
+          setHeroItem(bestHero);
+        }
       } catch (err) {
         console.error("Failed to load home data:", err);
       } finally {

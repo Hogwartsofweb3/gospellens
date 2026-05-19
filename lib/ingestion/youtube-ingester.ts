@@ -83,35 +83,51 @@ export async function runYouTubeIngestion() {
         continue;
       }
 
-      // 2. Fetch latest 20 videos from the uploads playlist
-      const playlistRes = await youtube.playlistItems.list({
-        part: ["snippet"],
-        playlistId: uploadsPlaylistId,
-        maxResults: 20,
-      });
+      // 2. Fetch up to 200 videos (4 pages) from the uploads playlist
+      let allVideoItems: any[] = [];
+      let nextPageToken: string | undefined = undefined;
 
-      const videoItems = playlistRes.data.items || [];
-      stats.fetched += videoItems.length;
+      for (let page = 0; page < 4; page++) {
+        const playlistRes = await youtube.playlistItems.list({
+          part: ["snippet"],
+          playlistId: uploadsPlaylistId,
+          maxResults: 50,
+          pageToken: nextPageToken,
+        });
+
+        if (playlistRes.data.items) {
+          allVideoItems.push(...playlistRes.data.items);
+        }
+
+        nextPageToken = playlistRes.data.nextPageToken || undefined;
+        if (!nextPageToken) break;
+      }
+
+      stats.fetched += allVideoItems.length;
 
       // Prepare list of video IDs to fetch duration in one call
-      const videoIds = videoItems.map((item) => item.snippet?.resourceId?.videoId).filter(Boolean) as string[];
+      const videoIds = allVideoItems.map((item) => item.snippet?.resourceId?.videoId).filter(Boolean) as string[];
       
       let videoDurations: Record<string, number> = {};
       if (videoIds.length > 0) {
-        const videosRes = await youtube.videos.list({
-          part: ["contentDetails"],
-          id: videoIds,
-        });
-        
-        videosRes.data.items?.forEach((video) => {
-          if (video.id && video.contentDetails?.duration) {
-            videoDurations[video.id] = parseIsoDuration(video.contentDetails.duration);
-          }
-        });
+        // YouTube API allows max 50 IDs per request for videos.list
+        for (let i = 0; i < videoIds.length; i += 50) {
+          const batchIds = videoIds.slice(i, i + 50);
+          const videosRes = await youtube.videos.list({
+            part: ["contentDetails"],
+            id: batchIds,
+          });
+          
+          videosRes.data.items?.forEach((video) => {
+            if (video.id && video.contentDetails?.duration) {
+              videoDurations[video.id] = parseIsoDuration(video.contentDetails.duration);
+            }
+          });
+        }
       }
 
       // 3. Process and upsert each video
-      for (const item of videoItems) {
+      for (const item of allVideoItems) {
         const snippet = item.snippet;
         const videoId = snippet?.resourceId?.videoId;
         

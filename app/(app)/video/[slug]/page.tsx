@@ -7,9 +7,10 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Bookmark, Share2, ChevronDown, ChevronUp,
-  CheckCircle, UserPlus, Check, X, Link2, Eye,
+  CheckCircle, UserPlus, Check, Eye,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { ShareModal } from "@/components/ui/ShareModal";
 
 interface ContentItem {
   id: string;
@@ -60,7 +61,6 @@ export default function VideoPlayerPage() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [descExpanded, setDescExpanded] = useState(false);
   const [showShare, setShowShare] = useState(false);
-  const [linkCopied, setLinkCopied] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -122,8 +122,6 @@ export default function VideoPlayerPage() {
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);
-    setLinkCopied(true);
-    setTimeout(() => setLinkCopied(false), 2000);
   };
 
   if (loading) {
@@ -278,32 +276,12 @@ export default function VideoPlayerPage() {
         </div>
       </div>
 
-      {/* Share Modal */}
-      <AnimatePresence>
-        {showShare && (
-          <motion.div
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-4"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={() => setShowShare(false)}
-          >
-            <motion.div
-              className="bg-surface border border-elevated rounded-2xl p-6 w-full max-w-sm"
-              initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-white font-poppins font-semibold">Share Video</h3>
-                <button onClick={() => setShowShare(false)} className="text-text-secondary hover:text-white"><X size={18} /></button>
-              </div>
-              <p className="text-text-secondary text-sm mb-4 line-clamp-2">{video.title}</p>
-              <button onClick={copyLink}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-elevated hover:bg-primary/20 border border-elevated hover:border-primary transition-colors text-white text-sm">
-                {linkCopied ? <><Check size={16} className="text-primary" /> Copied!</> : <><Link2 size={16} /> Copy Link</>}
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <ShareModal
+        isOpen={showShare}
+        onClose={() => setShowShare(false)}
+        title={video.title}
+        contentType={video.content_type}
+      />
     </div>
   );
 }

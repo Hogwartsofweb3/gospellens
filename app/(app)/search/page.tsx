@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X, Mic, BookOpen, Heart, Music, Cross, Globe, Flame, Book } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LandscapeCard, ContentItem } from "@/components/ui/ContentCard";
 import { LandscapeCardSkeleton } from "@/components/ui/Skeletons";
@@ -12,9 +12,12 @@ const TRENDING_SEARCHES = [
 ];
 
 const TOPICS = [
-  { id: "Sermons", icon: "🎤" }, { id: "Bible Study", icon: "📖" },
-  { id: "Prayer", icon: "🙏" }, { id: "Worship", icon: "🎵" },
-  { id: "Theology", icon: "✝️" }, { id: "Evangelism", icon: "🌍" },
+  { id: "Sermons",     label: "Sermons",     Icon: Mic,      color: "#E040A0" },
+  { id: "Bible Study", label: "Bible Study", Icon: BookOpen, color: "#29B6F6" },
+  { id: "Prayer",      label: "Prayer",      Icon: Heart,    color: "#F97316" },
+  { id: "Worship",     label: "Worship",     Icon: Music,    color: "#A78BFA" },
+  { id: "Theology",    label: "Theology",    Icon: Book,     color: "#34D399" },
+  { id: "Evangelism",  label: "Evangelism",  Icon: Globe,    color: "#FBBF24" },
 ];
 
 const RESULT_TABS = [
@@ -151,10 +154,11 @@ export default function SearchPage() {
                   <button
                     key={t.id}
                     onClick={() => setQuery(t.id)}
-                    className="flex flex-col items-center gap-2 p-4 rounded-lg bg-surface border border-border hover:border-primary/40 hover:shadow-glow-pink transition-all"
+                    className="flex flex-col items-center gap-2.5 p-4 rounded-xl bg-surface border-l-[3px] hover:brightness-110 transition-all text-left"
+                    style={{ borderColor: t.color }}
                   >
-                    <span className="text-2xl">{t.icon}</span>
-                    <span className="text-white text-xs font-medium text-center">{t.id}</span>
+                    <t.Icon size={20} style={{ color: t.color }} />
+                    <span className="text-white text-xs font-semibold text-center leading-tight">{t.label}</span>
                   </button>
                 ))}
               </div>

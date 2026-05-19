@@ -10,9 +10,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#0F0F0F",
-        surface: "#1A1A1A",
-        elevated: "#242424",
+        background: "var(--color-bg)",
+        surface: "var(--color-surface)",
+        elevated: "var(--color-elevated)",
         primary: {
           DEFAULT: "#E040A0",
           foreground: "#FFFFFF",
@@ -22,11 +22,11 @@ const config: Config = {
           foreground: "#FFFFFF",
         },
         text: {
-          primary: "#FFFFFF",
-          secondary: "#AAAAAA",
-          muted: "#555555",
+          primary: "var(--color-text-primary)",
+          secondary: "var(--color-text-secondary)",
+          muted: "var(--color-text-muted)",
         },
-        border: "#2A2A2A",
+        border: "var(--color-border)",
         success: "#4CAF50",
         error: "#F44336",
       },
