@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { runRssIngestion } from "@/lib/ingestion/rss-ingester";
 import { runYouTubeIngestion } from "@/lib/ingestion/youtube-ingester";
