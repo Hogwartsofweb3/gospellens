@@ -188,7 +188,7 @@ export default function DiscoverPage() {
                 <div key={i} className="skeleton rounded-md" style={{ height: 160 }} />
               ))
             : content.map((item) => (
-                <LandscapeCard key={item.id} item={item} />
+                <LandscapeCard key={item.id} item={item} fluid={true} />
               ))}
         </div>
 

@@ -69,10 +69,12 @@ export function LandscapeCard({
   item,
   showProgress,
   progress = 0,
+  fluid = false,
 }: {
   item: ContentItem;
   showProgress?: boolean;
   progress?: number;
+  fluid?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -114,8 +116,8 @@ export function LandscapeCard({
   return (
     <Link
       href={contentUrl}
-      className="relative flex-shrink-0 rounded-md overflow-hidden cursor-pointer group"
-      style={{ width: 280, height: 160 }}
+      className={`relative flex-shrink-0 rounded-md overflow-hidden cursor-pointer group ${fluid ? 'w-full aspect-video' : ''}`}
+      style={fluid ? undefined : { width: 280, height: 160 }}
       onMouseEnter={() => {
         setHovered(true);
         router.prefetch(contentUrl);

@@ -312,16 +312,10 @@ export default function MinistryProfilePage() {
         {/* Content Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {content.map((item) => (
-            <Link
-              key={item.id}
-              href={`/${CONTENT_ROUTE[item.content_type] || "article"}/${item.id}`}
-              className="block"
-            >
-              <LandscapeCard item={item} />
-            </Link>
+            <LandscapeCard key={item.id} item={item} fluid={true} />
           ))}
           {contentLoading && Array.from({ length: 6 }).map((_, i) => (
-            <LandscapeCardSkeleton key={i} />
+            <div key={i} className="w-full aspect-video bg-elevated rounded-md animate-pulse" />
           ))}
         </div>
 

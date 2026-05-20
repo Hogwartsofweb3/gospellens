@@ -202,8 +202,8 @@ export default function SearchPage() {
             {/* Results Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {loading
-                ? Array.from({ length: 9 }).map((_, i) => <LandscapeCardSkeleton key={i} />)
-                : results.map((item) => <LandscapeCard key={item.id} item={item} />)}
+                ? Array.from({ length: 9 }).map((_, i) => <LandscapeCardSkeleton key={i} fluid={true} />)
+                : results.map((item) => <LandscapeCard key={item.id} item={item} fluid={true} />)}
             </div>
 
             {/* No results state */}

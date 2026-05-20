@@ -1,10 +1,10 @@
 // Skeleton loading states for all card types
 
-export function LandscapeCardSkeleton() {
+export function LandscapeCardSkeleton({ fluid = false }: { fluid?: boolean } = {}) {
   return (
     <div
-      className="flex-shrink-0 rounded-md overflow-hidden skeleton"
-      style={{ width: 280, height: 160 }}
+      className={`flex-shrink-0 rounded-md overflow-hidden skeleton ${fluid ? 'w-full aspect-video' : ''}`}
+      style={fluid ? undefined : { width: 280, height: 160 }}
     />
   );
 }
