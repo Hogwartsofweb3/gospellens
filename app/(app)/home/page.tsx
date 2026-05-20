@@ -134,23 +134,27 @@ export default function HomePage() {
         const podcastItems: ContentItem[] = podcastsData.data || [];
         const videoItems: ContentItem[] = videosData.data || [];
 
-        // Pick hero item: highest view count video from the current week that HAS a thumbnail
+        // Pick hero item: random from the top 10 highest view count videos from the current week that HAVE a thumbnail
         const now = new Date();
         const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         
-        let bestHero = trendingItems.find(
+        let validHeroes = trendingItems.filter(
           (item) => item.content_type === "video" && item.thumbnail_url && new Date(item.published_at || 0) >= oneWeekAgo
-        );
+        ).slice(0, 10);
 
-        // Fallback: highest view count video of all time that HAS a thumbnail
-        if (!bestHero) {
-          bestHero = trendingItems.find((item) => item.content_type === "video" && item.thumbnail_url);
+        // Fallback: highest view count videos of all time that HAVE a thumbnail
+        if (validHeroes.length === 0) {
+          validHeroes = trendingItems.filter((item) => item.content_type === "video" && item.thumbnail_url).slice(0, 10);
         }
         
         // Final fallback: any trending item
-        if (!bestHero && trendingItems.length > 0) {
-          bestHero = trendingItems[0];
+        if (validHeroes.length === 0 && trendingItems.length > 0) {
+          validHeroes = trendingItems.slice(0, 10);
         }
+
+        let bestHero = validHeroes.length > 0 
+          ? validHeroes[Math.floor(Math.random() * validHeroes.length)] 
+          : null;
 
         setTrending(trendingItems);
         setArticles(articleItems);

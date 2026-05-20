@@ -56,6 +56,39 @@ const SOCIAL_OPTIONS = [
       </svg>
     ),
   },
+  {
+    name: "LinkedIn",
+    bg: "bg-[#0077b5]",
+    getUrl: (url: string, title: string) =>
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    icon: (
+      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Reddit",
+    bg: "bg-[#FF4500]",
+    getUrl: (url: string, title: string) =>
+      `https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
+    icon: (
+      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.509 1.183-.84 2.815-1.388 4.616-1.467l.889-4.156a.222.222 0 0 1 .264-.17l3.056.643a1.244 1.244 0 0 1 1.196-.857zm-8.625 9.176c-.63 0-1.144.514-1.144 1.144s.514 1.144 1.144 1.144 1.144-.514 1.144-1.144-.514-1.144-1.144-1.144zm7.25 0c-.63 0-1.144.514-1.144 1.144s.514 1.144 1.144 1.144 1.144-.514 1.144-1.144-.514-1.144-1.144-1.144zm-3.624 3.712c-1.524 0-2.525-.366-2.553-.377a.24.24 0 0 1-.137-.309.24.24 0 0 1 .309-.137c.05.016.907.34 2.381.34 1.474 0 2.33-.324 2.381-.34a.24.24 0 0 1 .309.137.24.24 0 0 1-.137.309c-.028.01-1.029.377-2.553.377z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Email",
+    bg: "bg-[#333333]",
+    getUrl: (url: string, title: string) =>
+      `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`,
+    icon: (
+      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+    ),
+  },
 ];
 
 export function ShareModal({ isOpen, onClose, title, contentType = "content" }: ShareModalProps) {

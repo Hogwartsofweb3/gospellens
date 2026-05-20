@@ -74,32 +74,66 @@ export default function SignUpPage() {
     <div className="w-full max-w-md bg-surface border border-border p-8 rounded-lg shadow-card text-text-primary my-8">
       {/* Email confirmation screen */}
       {emailSent ? (
-        <div className="flex flex-col items-center text-center py-4">
-          <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center mb-5">
-            <svg className="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <div className="flex flex-col items-center text-center py-6 px-2">
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-20 h-20 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center mb-6 shadow-glow-pink"
+          >
+            <svg className="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
             </svg>
-          </div>
-          <h2 className="text-2xl font-poppins font-bold text-white mb-2">Check Your Inbox</h2>
-          <p className="text-text-secondary text-sm leading-relaxed mb-2">
-            We sent a confirmation link to
-          </p>
-          <p className="text-primary font-semibold text-sm mb-4">{email}</p>
-          <p className="text-text-secondary text-sm leading-relaxed mb-8">
-            Please open the email and click <strong className="text-white">Confirm your email</strong> to activate your Gospel Lens account. Check your spam folder if you don&apos;t see it within a few minutes.
-          </p>
-          <Link
-            href="/signin"
-            className="w-full py-2.5 bg-primary text-white font-medium rounded-md hover:bg-primary/90 transition-all text-center text-sm"
+          </motion.div>
+          <motion.h2 
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="text-2xl font-poppins font-bold text-white mb-3"
           >
-            Back to Sign In
-          </Link>
-          <p className="text-text-muted text-xs mt-4">
-            Wrong email?{" "}
-            <button onClick={() => setEmailSent(false)} className="text-secondary hover:underline">
-              Try again
-            </button>
-          </p>
+            Check your inbox
+          </motion.h2>
+          <motion.div
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <p className="text-text-secondary text-sm leading-relaxed mb-1">
+              We've sent a verification link to
+            </p>
+            <p className="text-primary font-semibold text-base mb-6 px-4 py-2 bg-primary/5 rounded-lg border border-primary/10 inline-block">{email}</p>
+            
+            <div className="bg-surface border border-elevated p-4 rounded-xl text-left mb-8 shadow-sm">
+              <p className="text-text-secondary text-sm leading-relaxed mb-3">
+                <strong className="text-white">Next steps:</strong>
+              </p>
+              <ol className="text-sm text-text-muted space-y-2 list-decimal list-inside">
+                <li>Open your email client</li>
+                <li>Click the verification link</li>
+                <li>Return here to sign in</li>
+              </ol>
+              <div className="mt-4 pt-3 border-t border-border flex items-start gap-2">
+                <svg className="w-4 h-4 text-secondary mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-[11px] text-text-muted leading-tight">
+                  <strong className="text-text-secondary">Note for Admins:</strong> The visual styling of this email is controlled in your Supabase Dashboard (Authentication → Email Templates), not in the application code.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/signin"
+              className="w-full inline-block py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary/90 transition-all text-center text-sm shadow-md"
+            >
+              Return to Sign In
+            </Link>
+            <p className="text-text-muted text-xs mt-5">
+              Didn't receive it?{" "}
+              <button onClick={() => setEmailSent(false)} className="text-secondary hover:text-white transition-colors underline underline-offset-2">
+                Try a different email
+              </button>
+            </p>
+          </motion.div>
         </div>
       ) : (
         <>
