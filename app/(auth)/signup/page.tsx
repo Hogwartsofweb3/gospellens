@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Globe, Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { motion } from "framer-motion";
 
 export default function SignUpPage() {
   const [fullName, setFullName] = useState("");
