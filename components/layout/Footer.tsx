@@ -9,10 +9,10 @@ export function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <GospelLensLogo size={36} />
-            <p className="text-text-secondary text-sm mt-5 max-w-sm leading-relaxed">
+            <p className="text-primary text-sm mt-3.5 italic font-semibold tracking-wide">In God's Light, We See Light</p>
+            <p className="text-text-secondary text-sm mt-3.5 max-w-sm leading-relaxed">
               Every trusted Christian voice. One place. We curate the best sermons, articles, and podcasts from faithful ministries around the globe.
             </p>
-            <p className="text-primary text-sm mt-3 italic font-medium">In God's Light, We See Light</p>
           </div>
 
           {/* Links Columns */}

@@ -233,6 +233,7 @@ async function seedMinistries() {
         is_featured: ministry.is_featured || false,
         display_as: ministry.display_as || null,
         topic_tags: ministry.topic_tags || [],
+        logo_url: (ministry as any).logo_url || null,
       }, { onConflict: "slug" });
       
     if (error) {

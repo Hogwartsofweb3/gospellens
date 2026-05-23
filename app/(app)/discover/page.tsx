@@ -7,18 +7,18 @@ import { LandscapeCard, ContentItem } from "@/components/ui/ContentCard";
 import { LandscapeCardSkeleton, TopicTileSkeleton, MinistryCardSkeleton } from "@/components/ui/Skeletons";
 
 const TOPICS = [
-  { id: "Sermons", label: "Sermons", icon: "🎤", color: "#E040A0" },
-  { id: "Bible Study", label: "Bible Study", icon: "📖", color: "#29B6F6" },
-  { id: "Prayer", label: "Prayer", icon: "🙏", color: "#A78BFA" },
-  { id: "Worship", label: "Worship", icon: "🎵", color: "#34D399" },
-  { id: "Theology", label: "Theology", icon: "✝️", color: "#F59E0B" },
-  { id: "Evangelism", label: "Evangelism", icon: "🌍", color: "#F97316" },
-  { id: "Family & Marriage", label: "Family & Marriage", icon: "👨‍👩‍👧", color: "#EC4899" },
-  { id: "Youth & Teens", label: "Youth & Teens", icon: "⚡", color: "#38BDF8" },
-  { id: "Prophecy", label: "Prophecy", icon: "🔮", color: "#818CF8" },
-  { id: "Healing & Miracles", label: "Healing & Miracles", icon: "✨", color: "#4ADE80" },
-  { id: "Leadership", label: "Leadership", icon: "👑", color: "#FBBF24" },
-  { id: "Devotionals", label: "Devotionals", icon: "📝", color: "#FB7185" },
+  { id: "Sermons", label: "Sermons", icon: "https://img.icons8.com/fluency/96/microphone.png", color: "#E040A0" },
+  { id: "Bible Study", label: "Bible Study", icon: "https://img.icons8.com/fluency/96/bible.png", color: "#29B6F6" },
+  { id: "Prayer", label: "Prayer", icon: "https://img.icons8.com/fluency/96/praying-hands.png", color: "#A78BFA" },
+  { id: "Worship", label: "Worship", icon: "https://img.icons8.com/fluency/96/musical-notes.png", color: "#34D399" },
+  { id: "Theology", label: "Theology", icon: "https://img.icons8.com/fluency/96/latin-cross.png", color: "#F59E0B" },
+  { id: "Evangelism", label: "Evangelism", icon: "https://img.icons8.com/fluency/96/globe.png", color: "#F97316" },
+  { id: "Family & Marriage", label: "Family & Marriage", icon: "https://img.icons8.com/fluency/96/family.png", color: "#EC4899" },
+  { id: "Youth & Teens", label: "Youth & Teens", icon: "https://img.icons8.com/fluency/96/lightning-bolt.png", color: "#38BDF8" },
+  { id: "Prophecy", label: "Prophecy", icon: "https://img.icons8.com/fluency/96/crystal-ball.png", color: "#818CF8" },
+  { id: "Healing & Miracles", label: "Healing & Miracles", icon: "https://img.icons8.com/fluency/96/sparkles.png", color: "#4ADE80" },
+  { id: "Leadership", label: "Leadership", icon: "https://img.icons8.com/fluency/96/crown.png", color: "#FBBF24" },
+  { id: "Devotionals", label: "Devotionals", icon: "https://img.icons8.com/fluency/96/notebook.png", color: "#FB7185" },
 ];
 
 const CONTENT_TYPES = [
@@ -131,7 +131,13 @@ export default function DiscoverPage() {
                   className="absolute inset-0 opacity-10"
                   style={{ background: `radial-gradient(circle at top right, ${topic.color}, transparent 70%)` }}
                 />
-                <span className="text-3xl relative z-10">{topic.icon}</span>
+                <div className="relative w-9 h-9 z-10 flex items-center justify-center mb-1">
+                  {topic.icon.startsWith("http") ? (
+                    <img src={topic.icon} alt={topic.label} className="w-9 h-9 object-contain" />
+                  ) : (
+                    <span className="text-3xl">{topic.icon}</span>
+                  )}
+                </div>
                 <span className="font-poppins font-semibold text-white text-sm relative z-10">
                   {topic.label}
                 </span>

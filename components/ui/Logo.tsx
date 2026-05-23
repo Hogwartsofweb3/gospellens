@@ -18,7 +18,7 @@ export function GospelLensLogo({ size = 36, showText = true, className = "" }: L
       />
       {showText && (
         <span
-          className="font-poppins font-bold tracking-tight text-white"
+          className="font-poppins font-bold tracking-tight text-white hidden sm:inline"
           style={{ fontSize: size * 0.5 }}
         >
           Gospel<span className="text-primary">Lens</span>

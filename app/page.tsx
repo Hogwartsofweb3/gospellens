@@ -24,7 +24,7 @@ function Navbar() {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : -10 }}
       transition={{ duration: 0.3 }}
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12"
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-12"
       style={{
         height: 64,
         backgroundColor: "rgba(15,15,15,0.95)",
@@ -34,16 +34,16 @@ function Navbar() {
       }}
     >
       <GospelLensLogo size={34} />
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 md:gap-3">
         <Link
           href="/signin"
-          className="px-5 py-2 rounded-pill border border-primary text-primary text-sm font-medium hover:bg-primary/10 transition-colors"
+          className="px-3 py-1.5 md:px-5 md:py-2 rounded-full border border-primary text-primary text-xs md:text-sm font-medium hover:bg-primary/10 transition-colors"
         >
           Sign In
         </Link>
         <Link
           href="/signup"
-          className="px-5 py-2 rounded-pill bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors shadow-glow-pink"
+          className="px-3 py-1.5 md:px-5 md:py-2 rounded-full bg-primary text-white text-xs md:text-sm font-medium hover:bg-primary/90 transition-colors shadow-glow-pink"
         >
           Get Started Free
         </Link>
@@ -411,14 +411,16 @@ function ContentPreviewSection() {
 
 // ── Ministries ────────────────────────────────────────────────────────────
 const MINISTRY_LOGOS = [
-  { name: "Desiring God",       logoUrl: "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://desiringgod.org&size=128",         color: "#E040A0" },
-  { name: "The Gospel Coalition", logoUrl: "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://thegospelcoalition.org&size=128", color: "#29B6F6" },
-  { name: "Ligonier",           logoUrl: "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://ligonier.org&size=128",             color: "#A78BFA" },
-  { name: "Grace to You",       logoUrl: "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://gty.org&size=128",                 color: "#34D399" },
-  { name: "Bible Project",      logoUrl: "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://bibleproject.com&size=128",         color: "#38BDF8" },
-  { name: "Apologia Studios",   logoUrl: "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://apologiastudios.com&size=128",     color: "#818CF8" },
-  { name: "Gospel in Life",     logoUrl: "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://gospelinlife.com&size=128",         color: "#FBBF24" },
-  { name: "Monergism",          logoUrl: "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://monergism.com&size=128",             color: "#F472B6" },
+  { name: "Desiring God",       logoUrl: "https://www.desiringgod.org/apple-touch-icon.png",         color: "#E040A0" },
+  { name: "The Gospel Coalition", logoUrl: "https://www.thegospelcoalition.org/apple-touch-icon.png", color: "#29B6F6" },
+  { name: "Ligonier Ministries", logoUrl: "https://www.ligonier.org/apple-touch-icon.png",             color: "#A78BFA" },
+  { name: "Grace to You",       logoUrl: "https://www.gty.org/apple-touch-icon.png",                 color: "#34D399" },
+  { name: "Bible Project",      logoUrl: "https://bibleproject.com/apple-touch-icon.png",         color: "#38BDF8" },
+  { name: "Apologia Studios",   logoUrl: "https://img.icons8.com/fluency/96/video.png",     color: "#818CF8" },
+  { name: "Gospel in Life",     logoUrl: "https://gospelinlife.com/apple-touch-icon.png",         color: "#FBBF24" },
+  { name: "Monergism",          logoUrl: "https://www.monergism.com/favicon.ico",             color: "#F472B6" },
+  { name: "Sovereign Grace Lagos", logoUrl: "https://img.icons8.com/fluency/96/church.png", color: "#3B82F6" },
+  { name: "Sovereign Grace Abuja", logoUrl: "https://img.icons8.com/fluency/96/church.png", color: "#10B981" }
 ];
 
 function MinistriesSection() {
