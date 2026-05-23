@@ -187,6 +187,30 @@ const MINISTRIES_SEED = [
     display_as: "podcast",
     topic_tags: ["Theology", "Bible Study", "Sermons", "Leadership", "Evangelism"],
   },
+
+  // ==========================================
+  // NIGERIAN SOVEREIGN GRACE CHURCHES
+  // ==========================================
+  {
+    name: "Sovereign Grace Baptist Church Lagos",
+    slug: "sovereign-grace-baptist-lagos",
+    youtube_channel_id: "UCvnvCjdzSNRb9_UrQRsloTw",
+    category: "Reformed Baptist",
+    description: "Sovereign Grace Baptist Church Lagos is a Reformed Baptist church in Lagos, Nigeria committed to expository preaching, sound doctrine, and the glory of God.",
+    is_verified: true,
+    is_featured: true,
+    topic_tags: ["Sermons", "Bible Study", "Theology", "Worship", "Prayer"],
+  },
+  {
+    name: "Sovereign Grace Community Church Abuja",
+    slug: "sovereign-grace-community-abuja",
+    youtube_channel_id: "UCWRXwx_RKv3aNxks9zGeXHw",
+    category: "Reformed Baptist",
+    description: "Sovereign Grace Community Church Abuja is a Bible-believing church in Nigeria's capital committed to the proclamation of the sovereign grace of God in Christ.",
+    is_verified: true,
+    is_featured: true,
+    topic_tags: ["Sermons", "Bible Study", "Theology", "Worship", "Evangelism"],
+  },
 ];
 
 async function seedMinistries() {

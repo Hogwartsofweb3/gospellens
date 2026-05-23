@@ -40,7 +40,8 @@ const nextConfig = {
               // Style from self and Google Fonts
               "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
               // Microphone/camera not needed
-              "media-src 'self' blob: *.supabase.co *.amazonaws.com *.cloudfront.net",
+              // Media: allow podcast audio from CDNs (podbean, simplecast, feedburner, etc.)
+              "media-src 'self' blob: *.supabase.co *.amazonaws.com *.cloudfront.net *.podbean.com *.simplecast.com *.buzzsprout.com *.soundcloud.com *.podomatic.com feeds.gty.org *.ligonier.org desiringgod.org *.feedburner.com *.rsshub.app media.blubrry.com *.transistor.fm *.spreaker.com",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",

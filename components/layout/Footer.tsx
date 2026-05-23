@@ -41,7 +41,7 @@ export function Footer() {
             <ul className="flex flex-col gap-3">
               <li><Link href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-white transition-colors text-sm">Privacy Policy</Link></li>
               <li><Link href="/terms" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-white transition-colors text-sm">Terms of Service</Link></li>
-              <li><span className="text-text-muted text-sm cursor-not-allowed">Cookie Policy</span></li>
+              <li><Link href="/cookie-policy" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-white transition-colors text-sm">Cookie Policy</Link></li>
             </ul>
           </div>
         </div>
@@ -61,6 +61,11 @@ export function Footer() {
             <a href="https://x.com/gospel_lenss" target="_blank" rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-elevated border border-border flex items-center justify-center text-text-secondary hover:text-white hover:border-primary/50 transition-all group" aria-label="X (Twitter)">
               <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            {/* Substack */}
+            <a href="https://gospellens.substack.com?utm_source=navbar&utm_medium=web" target="_blank" rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-elevated border border-border flex items-center justify-center text-text-secondary hover:text-white hover:border-primary/50 transition-all group" aria-label="Substack">
+              <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>
             </a>
           </div>
         </div>

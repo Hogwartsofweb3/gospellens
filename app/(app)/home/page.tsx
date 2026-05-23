@@ -134,26 +134,27 @@ export default function HomePage() {
         const podcastItems: ContentItem[] = podcastsData.data || [];
         const videoItems: ContentItem[] = videosData.data || [];
 
-        // Pick hero item: random from the top 10 highest view count videos from the current week that HAVE a thumbnail
+        // Pick hero: rotate across ALL content types (video, podcast, article, audio)
+        // Prefer items from this week, then fall back to all-time trending
         const now = new Date();
         const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        
-        let validHeroes = trendingItems.filter(
-          (item) => item.content_type === "video" && item.thumbnail_url && new Date(item.published_at || 0) >= oneWeekAgo
-        ).slice(0, 10);
 
-        // Fallback: highest view count videos of all time that HAVE a thumbnail
+        let validHeroes = trendingItems.filter(
+          (item) => item.thumbnail_url && new Date(item.published_at || 0) >= oneWeekAgo
+        ).slice(0, 15);
+
+        // Fallback: any trending item with thumbnail
         if (validHeroes.length === 0) {
-          validHeroes = trendingItems.filter((item) => item.content_type === "video" && item.thumbnail_url).slice(0, 10);
+          validHeroes = trendingItems.filter((item) => item.thumbnail_url).slice(0, 15);
         }
-        
+
         // Final fallback: any trending item
         if (validHeroes.length === 0 && trendingItems.length > 0) {
           validHeroes = trendingItems.slice(0, 10);
         }
 
-        let bestHero = validHeroes.length > 0 
-          ? validHeroes[Math.floor(Math.random() * validHeroes.length)] 
+        const bestHero = validHeroes.length > 0
+          ? validHeroes[Math.floor(Math.random() * validHeroes.length)]
           : null;
 
         setTrending(trendingItems);

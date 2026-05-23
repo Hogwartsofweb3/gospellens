@@ -15,6 +15,8 @@ export async function GET(req: Request) {
     const type = searchParams.get("type") || "all";
     const topic = searchParams.get("topic") || "all";
     const ministryId = searchParams.get("ministry_id");
+    const ministrySlug = searchParams.get("ministry_slug");
+    const year = searchParams.get("year");
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "20", 10);
     const sort = searchParams.get("sort") || "latest";
@@ -23,8 +25,8 @@ export async function GET(req: Request) {
 
     const search = searchParams.get("search");
 
-    // Cache logic — don't cache search queries
-    const cacheKey = !search
+    // Cache key — don't cache search/filter queries
+    const cacheKey = (!search && !ministrySlug && !year)
       ? `content:${type}:${topic}:${ministryId || "all"}:${sort}:${page}:${limit}`
       : null;
 
@@ -74,6 +76,28 @@ export async function GET(req: Request) {
 
     if (ministryId) {
       query = query.eq("ministry_id", ministryId);
+    }
+
+    // Filter by ministry slug
+    if (ministrySlug) {
+      const { data: ministryData } = await supabase
+        .from("ministries")
+        .select("id")
+        .eq("slug", ministrySlug)
+        .single();
+      if (ministryData?.id) {
+        query = query.eq("ministry_id", ministryData.id);
+      }
+    }
+
+    // Filter by year
+    if (year) {
+      const yearNum = parseInt(year, 10);
+      if (!isNaN(yearNum)) {
+        query = query
+          .gte("published_at", `${yearNum}-01-01`)
+          .lte("published_at", `${yearNum}-12-31`);
+      }
     }
 
     // Apply Sorting

@@ -9,7 +9,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <OfflineBanner />
       <AppNav />
       {/* Offset for fixed navbar */}
-      <main className="pt-16 pb-20 flex-1">
+      <main className="pt-16 pb-36 md:pb-20 flex-1">
         {children}
       </main>
       <Footer />

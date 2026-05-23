@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Menu, X, User, Bookmark } from "lucide-react";
+import { Home, Search, Bookmark, Library, User, X, Menu } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GospelLensLogo } from "@/components/ui/Logo";
 import { NotificationsDropdown } from "@/components/ui/NotificationsDropdown";
 
 const NAV_LINKS = [
-  { href: "/home", label: "Home" },
-  { href: "/search", label: "Search" },
-  { href: "/bookmarks", label: "Bookmarks" },
+  { href: "/home",      label: "Home",      Icon: Home },
+  { href: "/search",    label: "Search",    Icon: Search },
+  { href: "/discover",  label: "Resources", Icon: Library },
+  { href: "/bookmarks", label: "Bookmarks", Icon: Bookmark },
 ];
 
 export function AppNav() {
@@ -23,8 +24,9 @@ export function AppNav() {
 
   return (
     <>
+      {/* ── Desktop / Tablet Header ─────────────────────────────── */}
       <header
-        className="fixed top-0 left-0 right-0 z-40 flex items-center px-6 md:px-10"
+        className="fixed top-0 left-0 right-0 z-40 flex items-center px-4 md:px-10"
         style={{
           height: 64,
           backgroundColor: "#0F0F0F",
@@ -32,48 +34,43 @@ export function AppNav() {
         }}
       >
         {/* Logo */}
-        <Link href="/home" className="flex-shrink-0">
+        <Link href="/home" className="flex-shrink-0 mr-8">
           <GospelLensLogo size={34} />
         </Link>
 
         {/* Center nav — desktop */}
-        <nav className="hidden md:flex items-center gap-8 ml-12">
+        <nav className="hidden md:flex items-center gap-1 flex-1">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative text-sm font-medium transition-colors group"
-                style={{ color: isActive ? "#E040A0" : "#FFFFFF" }}
+                className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive
+                    ? "text-primary bg-primary/10"
+                    : "text-text-secondary hover:text-white hover:bg-elevated"
+                }`}
               >
+                <link.Icon size={16} />
                 {link.label}
-                {/* Animated underline */}
-                <motion.span
-                  layoutId="nav-underline"
-                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full"
-                  initial={false}
-                  animate={{ opacity: isActive ? 1 : 0 }}
-                  transition={{ duration: 0.2 }}
-                />
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-pill"
+                    className="absolute inset-0 rounded-lg bg-primary/10 border border-primary/20"
+                    style={{ zIndex: -1 }}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                  />
+                )}
               </Link>
             );
           })}
         </nav>
 
         {/* Right side */}
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-2">
           {/* Notifications */}
           <NotificationsDropdown />
-
-          {/* Bookmarks — desktop shortcut */}
-          <Link
-            href="/bookmarks"
-            className="hidden md:flex p-2 rounded-full text-text-secondary hover:text-white hover:bg-elevated transition-colors"
-            aria-label="Bookmarks"
-          >
-            <Bookmark className="w-5 h-5" />
-          </Link>
 
           {/* Avatar */}
           <Link
@@ -83,43 +80,99 @@ export function AppNav() {
             <User className="w-4 h-4 text-primary" />
           </Link>
 
-          {/* Hamburger — mobile */}
+          {/* Hamburger — mobile only */}
           <button
-            className="md:hidden p-2 rounded-full hover:bg-elevated transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-elevated transition-colors ml-1"
             onClick={() => setMobileOpen((p) => !p)}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
-            {mobileOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
+            {mobileOpen
+              ? <X className="w-5 h-5 text-white" />
+              : <Menu className="w-5 h-5 text-white" />}
           </button>
         </div>
       </header>
 
-      {/* Mobile Menu */}
+      {/* ── Mobile Dropdown Menu ────────────────────────────────── */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="fixed top-16 left-0 right-0 z-30 bg-surface border-b border-border flex flex-col py-4 px-6 gap-1 md:hidden"
-          >
-            {NAV_LINKS.map((link) => {
-              const isActive = pathname === link.href;
-              return (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-30 bg-black/50 md:hidden"
+              onClick={() => setMobileOpen(false)}
+            />
+            {/* Drawer */}
+            <motion.nav
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.18 }}
+              className="fixed top-16 left-0 right-0 z-40 bg-surface border-b border-border shadow-xl md:hidden"
+            >
+              <div className="flex flex-col py-2 px-3">
+                {NAV_LINKS.map((link) => {
+                  const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`flex items-center gap-3 py-3.5 px-4 rounded-xl text-base font-medium transition-colors ${
+                        isActive
+                          ? "text-primary bg-primary/10"
+                          : "text-white hover:bg-elevated"
+                      }`}
+                    >
+                      <link.Icon size={20} />
+                      {link.label}
+                    </Link>
+                  );
+                })}
+                {/* Divider */}
+                <div className="border-t border-border my-2 mx-2" />
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`py-3 text-base font-medium rounded-md px-3 transition-colors ${
-                    isActive ? "text-primary bg-primary/10" : "text-white hover:bg-elevated"
-                  }`}
+                  href="/profile"
+                  className="flex items-center gap-3 py-3.5 px-4 rounded-xl text-base font-medium text-white hover:bg-elevated transition-colors"
                 >
-                  {link.label}
+                  <User size={20} />
+                  My Profile
                 </Link>
-              );
-            })}
-          </motion.div>
+                <Link
+                  href="/bookmarks"
+                  className="flex items-center gap-3 py-3.5 px-4 rounded-xl text-base font-medium text-white hover:bg-elevated transition-colors"
+                >
+                  <Bookmark size={20} />
+                  My Bookmarks
+                </Link>
+              </div>
+            </motion.nav>
+          </>
         )}
       </AnimatePresence>
+
+      {/* ── Mobile Bottom Tab Bar ───────────────────────────────── */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden flex items-center justify-around bg-surface border-t border-border"
+        style={{ height: 60, paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      >
+        {NAV_LINKS.map((link) => {
+          const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`flex flex-col items-center gap-1 px-4 py-2 transition-colors ${
+                isActive ? "text-primary" : "text-text-muted hover:text-text-secondary"
+              }`}
+            >
+              <link.Icon size={22} strokeWidth={isActive ? 2.5 : 1.8} />
+              <span className="text-[10px] font-medium">{link.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </>
   );
 }
