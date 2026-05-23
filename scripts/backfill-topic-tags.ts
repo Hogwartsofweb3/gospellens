@@ -14,8 +14,9 @@ if (!supabaseUrl || !supabaseServiceKey) {
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Custom keywords for each of the 12 filters
+// Comprehensive list matching BOTH Discover Page filters and Search Page theological topics
 const FILTER_TAGS = [
+  // ── Discover Page Filters ──────────────────────────────────────────────────
   {
     tag: "Sermons",
     keywords: ["sermon", "preach", "preaching", "expository", "homily", "pastor", "pulpit", "message", "preached"]
@@ -63,13 +64,97 @@ const FILTER_TAGS = [
   {
     tag: "Devotionals",
     keywords: ["devotional", "devotion", "devotions", "quiet time", "meditate", "meditation", "daily bread", "morning", "evening", "reflection", "reflections", "daily"]
+  },
+
+  // ── Search Page Theological Topics ──────────────────────────────────────────
+  {
+    tag: "Creation",
+    keywords: ["creation", "created", "genesis", "in the beginning", "eden", "adam", "eve", "maker", "cosmology"]
+  },
+  {
+    tag: "The Fall",
+    keywords: ["the fall", "sin", "temptation", "serpent", "fallen", "transgression", "depravity", "original sin", "rebellion", "wicked", "iniquity"]
+  },
+  {
+    tag: "Covenants",
+    keywords: ["covenant", "covenants", "abrahamic", "mosaic", "davidic", "new covenant", "testament"]
+  },
+  {
+    tag: "Redemption",
+    keywords: ["redemption", "redeem", "redeemer", "save", "salvation", "atonement", "blood of jesus", "cross", "rescue", "ransom"]
+  },
+  {
+    tag: "Christology",
+    keywords: ["christology", "jesus", "christ", "incarnation", "messiah", "son of god", "lord", "saviour", "divinity", "deity of christ"]
+  },
+  {
+    tag: "Kingdom",
+    keywords: ["kingdom", "kingdom of god", "kingdom of heaven", "reign", "king", "millennium", "sovereignty"]
+  },
+  {
+    tag: "Faith & Grace",
+    keywords: ["faith", "grace", "mercy", "trust", "believe", "unmerited favor", "favor", "saving faith"]
+  },
+  {
+    tag: "Holy Spirit",
+    keywords: ["holy spirit", "spirit", "comforter", "pentecost", "anointing", "ghost", "spiritual gifts"]
+  },
+  {
+    tag: "Judgment",
+    keywords: ["judgment", "judge", "wrath", "hell", "condemnation", "eternal punishment", "tribulation", "final judgment", "damnation"]
+  },
+  {
+    tag: "Church",
+    keywords: ["church", "body of christ", "congregation", "fellowship", "believers", "sacraments", "baptism", "communion", "local church"]
+  },
+  {
+    tag: "Marriage and Family", // Matching the exact ID used in search page
+    keywords: ["marriage", "family", "husband", "wife", "parent", "parenting", "child", "children", "home", "wedding", "spouses"]
+  },
+  {
+    tag: "Spiritual Warfare",
+    keywords: ["spiritual warfare", "demon", "demons", "devil", "satan", "warfare", "enemy", "armor of god", "exorcism", "spiritual battle"]
+  },
+  {
+    tag: "Eternal Life",
+    keywords: ["eternal life", "heaven", "paradise", "resurrection", "glorification", "immortality", "everlasting life"]
+  },
+  {
+    tag: "Restoration",
+    keywords: ["restoration", "restore", "renew", "renewal", "revival", "rebuild", "reconciliation"]
+  },
+  {
+    tag: "Christian Lifestyle", // Matching the exact ID "Christian Lifestyle" used in search page
+    keywords: ["godly living", "christian lifestyle", "holiness", "walk with god", "discipleship", "sanctification", "obedience", "fruit of the spirit", "morality", "ethics"]
   }
 ];
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function updateWithRetry(id: string, tags: string[], attempt = 1): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from("content")
+      .update({ topic_tags: tags })
+      .eq("id", id);
+      
+    if (error) throw error;
+    return true;
+  } catch (err: any) {
+    if (attempt <= 3) {
+      const delay = attempt * 500;
+      console.warn(`[Retry ${attempt}] Failed to update content ID ${id}. Retrying in ${delay}ms... (Error: ${err.message || err})`);
+      await sleep(delay);
+      return updateWithRetry(id, tags, attempt + 1);
+    }
+    console.error(`[Error] Failed to update content ID ${id} after 3 attempts.`, err.message || err);
+    return false;
+  }
+}
+
 async function backfillTags() {
-  console.log("Starting topic tags backfill...");
+  console.log("Starting comprehensive topic tags backfill with Rate-Limit Resilience...");
   
-  // Fetch content in batches of 100 to handle large databases efficiently
   let page = 0;
   const limit = 100;
   let hasMore = true;
@@ -97,8 +182,8 @@ async function backfillTags() {
       break;
     }
 
-    console.log(`Processing ${contentItems.length} content items...`);
-    
+    console.log(`Analyzing ${contentItems.length} content items...`);
+
     for (const item of contentItems) {
       const textToAnalyze = `${item.title || ""} ${item.description || ""}`.toLowerCase();
       const newTags = new Set<string>(item.topic_tags || []);
@@ -106,33 +191,24 @@ async function backfillTags() {
       // Analyze text against each filter
       for (const filter of FILTER_TAGS) {
         for (const keyword of filter.keywords) {
-          // Use word boundary check or exact matching to avoid false positives on substrings where possible,
-          // but basic includes works well for broad evangelical topics.
           if (textToAnalyze.includes(keyword.toLowerCase())) {
             newTags.add(filter.tag);
-            break; // Stop checking keywords for this tag once matched
+            break; 
           }
         }
       }
 
-      // Convert Set back to Array
       const finalTags = Array.from(newTags);
-
-      // Check if tags actually changed to avoid redundant updates
       const originalTags = item.topic_tags || [];
       const tagsChanged = 
         finalTags.length !== originalTags.length || 
         !finalTags.every(t => originalTags.includes(t));
 
       if (tagsChanged) {
-        const { error: updateError } = await supabase
-          .from("content")
-          .update({ topic_tags: finalTags })
-          .eq("id", item.id);
-
-        if (updateError) {
-          console.error(`Failed to update tags for content ID ${item.id}:`, updateError.message);
-        } else {
+        // Safe sequential delay of 40ms to prevent network socket exhaust
+        await sleep(40);
+        const success = await updateWithRetry(item.id, finalTags);
+        if (success) {
           totalUpdated++;
         }
       }

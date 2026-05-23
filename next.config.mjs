@@ -13,6 +13,14 @@ const nextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "**.googleapis.com" },
       { protocol: "https", hostname: "**.gstatic.com" },
+      { protocol: "https", hostname: "img.icons8.com" },
+      { protocol: "https", hostname: "www.desiringgod.org" },
+      { protocol: "https", hostname: "www.thegospelcoalition.org" },
+      { protocol: "https", hostname: "www.ligonier.org" },
+      { protocol: "https", hostname: "www.gty.org" },
+      { protocol: "https", hostname: "bibleproject.com" },
+      { protocol: "https", hostname: "gospelinlife.com" },
+      { protocol: "https", hostname: "www.monergism.com" },
       { protocol: "http", hostname: "localhost" },
     ],
   },
@@ -31,8 +39,8 @@ const nextConfig = {
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' *.posthog.com app.posthog.com",
               // API connections to Supabase, PostHog, Sentry, Upstash
               "connect-src 'self' *.supabase.co *.supabase.in wss://*.supabase.co *.sentry.io *.posthog.com app.posthog.com *.upstash.io",
-              // Images from YouTube, Supabase Storage, CDNs
-              "img-src 'self' data: blob: i.ytimg.com img.youtube.com *.supabase.co *.supabase.in *.amazonaws.com *.cloudfront.net *.googleapis.com",
+              // Images from YouTube, Supabase Storage, CDNs, Icons8, and Ministry official websites
+              "img-src 'self' data: blob: i.ytimg.com img.youtube.com *.supabase.co *.supabase.in *.amazonaws.com *.cloudfront.net *.googleapis.com img.icons8.com www.desiringgod.org www.thegospelcoalition.org www.ligonier.org www.gty.org bibleproject.com gospelinlife.com www.monergism.com",
               // YouTube embeds only
               "frame-src 'self' *.youtube.com youtube.com",
               // Google Fonts

@@ -42,7 +42,7 @@ export default function TermsPage() {
       <section>
         <h2 className="text-white text-xl font-semibold mb-2">3. User Accounts</h2>
         <p><strong className="text-white">3.1 Registration:</strong> To access certain features, you must create an account. You must provide accurate, complete, and current information. You are responsible for maintaining the confidentiality of your account credentials.</p>
-        <p className="mt-3"><strong className="text-white">3.2 Account Security:</strong> You are responsible for all activities that occur under your account. Notify us immediately at support@gospellens.com of any unauthorised use of your account.</p>
+        <p className="mt-3"><strong className="text-white">3.2 Account Security:</strong> You are responsible for all activities that occur under your account. Notify us immediately at info.gospellens@gmail.com of any unauthorised use of your account.</p>
         <p className="mt-3"><strong className="text-white">3.3 Age Requirement:</strong> You must be at least 13 years old to create an account. If you are under 18, you confirm you have parental consent to use the Service.</p>
       </section>
 
@@ -108,7 +108,7 @@ export default function TermsPage() {
         <h2 className="text-white text-xl font-semibold mb-2">13. Contact</h2>
         <p>For questions about these Terms:</p>
         <ul className="list-none space-y-1">
-          <li>Email: <a href="mailto:legal@gospellens.com" className="text-primary hover:underline">legal@gospellens.com</a></li>
+          <li>Email: <a href="mailto:info.gospellens@gmail.com" className="text-primary hover:underline">info.gospellens@gmail.com</a></li>
           <li>Website: <a href="https://gospellens.com" className="text-primary hover:underline">gospellens.com</a></li>
         </ul>
       </section>

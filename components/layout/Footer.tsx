@@ -31,8 +31,8 @@ export function Footer() {
             <ul className="flex flex-col gap-3">
               <li><Link href="/signin" className="text-text-secondary hover:text-white transition-colors text-sm">Sign In</Link></li>
               <li><Link href="/signup" className="text-text-secondary hover:text-white transition-colors text-sm">Create Account</Link></li>
-              <li><a href="mailto:hello@gospellens.app" className="text-text-secondary hover:text-white transition-colors text-sm">Contact Us</a></li>
-              <li><a href="mailto:hello@gospellens.app" className="text-text-secondary hover:text-white transition-colors text-sm">Suggest a Ministry</a></li>
+              <li><a href="mailto:info.gospellens@gmail.com" className="text-text-secondary hover:text-white transition-colors text-sm">Contact Us</a></li>
+              <li><a href="mailto:info.gospellens@gmail.com" className="text-text-secondary hover:text-white transition-colors text-sm">Suggest a Ministry</a></li>
             </ul>
           </div>
 
@@ -66,6 +66,13 @@ export function Footer() {
             <a href="https://gospellens.substack.com?utm_source=navbar&utm_medium=web" target="_blank" rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-elevated border border-border flex items-center justify-center text-text-secondary hover:text-white hover:border-primary/50 transition-all group" aria-label="Substack">
               <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>
+            </a>
+            {/* Email */}
+            <a href="mailto:info.gospellens@gmail.com"
+              className="w-10 h-10 rounded-full bg-elevated border border-border flex items-center justify-center text-text-secondary hover:text-white hover:border-primary/50 transition-all group" aria-label="Email">
+              <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
             </a>
           </div>
         </div>

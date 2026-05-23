@@ -89,7 +89,7 @@ export default function PrivacyPolicyPage() {
 
       <section>
         <h2 className="text-white text-xl font-semibold mb-2">6. Data Retention</h2>
-        <p>We retain your personal data for as long as your account is active or as needed to provide services. You may request deletion of your account and associated data at any time by contacting us at privacy@gospellens.com. Upon deletion, personal data is removed within 30 days, except where retention is required by law.</p>
+        <p>We retain your personal data for as long as your account is active or as needed to provide services. You may request deletion of your account and associated data at any time by contacting us at info.gospellens@gmail.com. Upon deletion, personal data is removed within 30 days, except where retention is required by law.</p>
       </section>
 
       <section>
@@ -104,7 +104,7 @@ export default function PrivacyPolicyPage() {
           <li>Withdraw consent at any time</li>
           <li>Lodge a complaint with a supervisory authority</li>
         </ul>
-        <p className="mt-3">To exercise any of these rights, contact us at <a href="mailto:privacy@gospellens.com" className="text-primary hover:underline">privacy@gospellens.com</a>.</p>
+        <p className="mt-3">To exercise any of these rights, contact us at <a href="mailto:info.gospellens@gmail.com" className="text-primary hover:underline">info.gospellens@gmail.com</a>.</p>
       </section>
 
       <section>
@@ -114,7 +114,7 @@ export default function PrivacyPolicyPage() {
 
       <section>
         <h2 className="text-white text-xl font-semibold mb-2">9. Children's Privacy</h2>
-        <p>Gospel Lens is not directed to children under 13 years of age. We do not knowingly collect personal information from children under 13. If you believe a child has provided us with personal information, contact us at privacy@gospellens.com and we will delete it promptly.</p>
+        <p>Gospel Lens is not directed to children under 13 years of age. We do not knowingly collect personal information from children under 13. If you believe a child has provided us with personal information, contact us at info.gospellens@gmail.com and we will delete it promptly.</p>
       </section>
 
       <section>
@@ -126,7 +126,7 @@ export default function PrivacyPolicyPage() {
         <h2 className="text-white text-xl font-semibold mb-2">11. Contact Us</h2>
         <p>For privacy-related questions or requests:</p>
         <ul className="list-none space-y-1">
-          <li>Email: <a href="mailto:privacy@gospellens.com" className="text-primary hover:underline">privacy@gospellens.com</a></li>
+          <li>Email: <a href="mailto:info.gospellens@gmail.com" className="text-primary hover:underline">info.gospellens@gmail.com</a></li>
           <li>Website: <a href="https://gospellens.com" className="text-primary hover:underline">gospellens.com</a></li>
         </ul>
       </section>

@@ -150,7 +150,7 @@ export default function ProfilePage() {
                 {[
                   { href: "/privacy-policy", label: "Privacy Policy", icon: <Shield size={16} /> },
                   { href: "/terms", label: "Terms of Service", icon: <FileText size={16} /> },
-                  { href: "mailto:hello@gospellens.app", label: "Help & Support", icon: <HelpCircle size={16} /> },
+                  { href: "mailto:info.gospellens@gmail.com", label: "Help & Support", icon: <HelpCircle size={16} /> },
                 ].map((link) => (
                   <a
                     key={link.href}

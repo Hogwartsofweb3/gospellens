@@ -99,7 +99,7 @@ export default function CookiePolicyPage() {
             <h2 className="text-white font-poppins font-semibold text-xl mb-4">6. Contact Us</h2>
             <p>
               If you have any questions about our use of cookies, please contact us at{" "}
-              <a href="mailto:hello@gospellens.app" className="text-primary hover:underline">hello@gospellens.app</a>.
+              <a href="mailto:info.gospellens@gmail.com" className="text-primary hover:underline">info.gospellens@gmail.com</a>.
             </p>
           </section>
         </div>

@@ -31,6 +31,18 @@ interface ContentItem {
   } | null;
 }
 
+function extractYouTubeId(url: string): string | null {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
+    /youtube\.com\/embed\/([^&\n?#]+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+}
+
 function formatTime(secs: number) {
   if (isNaN(secs)) return "0:00";
   const m = Math.floor(secs / 60);
@@ -60,6 +72,8 @@ export default function PodcastPlayerPage() {
   const slug = params.slug as string;
 
   const [episode, setEpisode] = useState<ContentItem | null>(null);
+  const isYouTube = episode?.source_url ? (episode.source_url.includes("youtube.com") || episode.source_url.includes("youtu.be")) : false;
+  const youtubeId = isYouTube && episode?.source_url ? extractYouTubeId(episode.source_url) : null;
   const [loading, setLoading] = useState(true);
   const [related, setRelated] = useState<ContentItem[]>([]);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -122,6 +136,9 @@ export default function PodcastPlayerPage() {
   // Setup HTML5 Audio
   useEffect(() => {
     if (!episode?.source_url) return;
+    const isYouTube = episode.source_url.includes("youtube.com") || episode.source_url.includes("youtu.be");
+    if (isYouTube) return;
+
     const audio = new Audio(episode.source_url);
     audio.playbackRate = playbackRate;
     audioRef.current = audio;
@@ -335,95 +352,119 @@ export default function PodcastPlayerPage() {
             )}
             <div className="border-t border-elevated mb-6" />
 
-            {/* Progress Bar */}
-            <div className="mb-4">
-              <div
-                ref={progressRef}
-                onClick={seek}
-                className="w-full h-1.5 bg-elevated rounded-full cursor-pointer relative group"
-              >
-                <div
-                  className="h-full bg-primary rounded-full relative"
-                  style={{ width: `${progressPct}%` }}
-                >
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-secondary opacity-0 group-hover:opacity-100 transition-opacity shadow-md" />
+            {isYouTube ? (
+              <div className="w-full rounded-xl overflow-hidden bg-black mb-6" style={{ aspectRatio: "16/9" }}>
+                {youtubeId ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${youtubeId}?rel=0&modestbranding=1&color=white`}
+                    className="w-full h-full"
+                    allowFullScreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    title={episode.title}
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-text-secondary">
+                    <p className="text-sm">Video cannot be embedded.</p>
+                    <a href={episode.source_url} target="_blank" rel="noopener noreferrer"
+                      className="text-secondary text-sm hover:underline">
+                      Watch on YouTube →
+                    </a>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                {/* Progress Bar */}
+                <div className="mb-4">
+                  <div
+                    ref={progressRef}
+                    onClick={seek}
+                    className="w-full h-1.5 bg-elevated rounded-full cursor-pointer relative group"
+                  >
+                    <div
+                      className="h-full bg-primary rounded-full relative"
+                      style={{ width: `${progressPct}%` }}
+                    >
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-secondary opacity-0 group-hover:opacity-100 transition-opacity shadow-md" />
+                    </div>
+                  </div>
+                  <div className="flex justify-between mt-1.5">
+                    <span className="text-text-secondary text-[13px] font-inter">{formatTime(currentTime)}</span>
+                    <span className="text-text-secondary text-[13px] font-inter">{formatTime(duration || episode.duration_seconds || 0)}</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between mt-1.5">
-                <span className="text-text-secondary text-[13px] font-inter">{formatTime(currentTime)}</span>
-                <span className="text-text-secondary text-[13px] font-inter">{formatTime(duration || episode.duration_seconds || 0)}</span>
-              </div>
-            </div>
 
-            {/* Main Controls */}
-            <div className="flex items-center justify-center gap-6 mb-6">
-              <button onClick={() => skip(-15)} className="text-white/70 hover:text-white transition-colors">
-                <Rewind size={26} />
-              </button>
-              <button
-                onClick={togglePlay}
-                className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors"
-              >
-                {isPlaying ? <Pause size={28} className="text-white" /> : <Play size={28} className="text-white ml-1" />}
-              </button>
-              <button onClick={() => skip(15)} className="text-white/70 hover:text-white transition-colors">
-                <FastForward size={26} />
-              </button>
-            </div>
+                {/* Main Controls */}
+                <div className="flex items-center justify-center gap-6 mb-6">
+                  <button onClick={() => skip(-15)} className="text-white/70 hover:text-white transition-colors">
+                    <Rewind size={26} />
+                  </button>
+                  <button
+                    onClick={togglePlay}
+                    className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors"
+                  >
+                    {isPlaying ? <Pause size={28} className="text-white" /> : <Play size={28} className="text-white ml-1" />}
+                  </button>
+                  <button onClick={() => skip(15)} className="text-white/70 hover:text-white transition-colors">
+                    <FastForward size={26} />
+                  </button>
+                </div>
 
-            {/* Secondary Controls */}
-            <div className="flex items-center justify-between">
-              {/* Speed Selector */}
-              <div className="relative">
-                <button
-                  onClick={() => { setShowSpeedMenu((p) => !p); setShowSleepMenu(false); }}
-                  className="px-3 py-1.5 rounded-full bg-surface border border-elevated text-white text-sm font-medium hover:border-primary transition-colors"
-                >
-                  {playbackRate}x
-                </button>
-                <AnimatePresence>
-                  {showSpeedMenu && (
-                    <motion.div
-                      className="absolute bottom-10 left-0 bg-surface border border-elevated rounded-xl overflow-hidden shadow-xl z-10 min-w-[100px]"
-                      initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }}
+                {/* Secondary Controls */}
+                <div className="flex items-center justify-between">
+                  {/* Speed Selector */}
+                  <div className="relative">
+                    <button
+                      onClick={() => { setShowSpeedMenu((p) => !p); setShowSleepMenu(false); }}
+                      className="px-3 py-1.5 rounded-full bg-surface border border-elevated text-white text-sm font-medium hover:border-primary transition-colors"
                     >
-                      {PLAYBACK_SPEEDS.map((s) => (
-                        <button key={s} onClick={() => changeSpeed(s)}
-                          className={`w-full px-4 py-2.5 text-sm text-left transition-colors hover:bg-elevated ${playbackRate === s ? "text-primary font-semibold" : "text-white"}`}>
-                          {s}x
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                      {playbackRate}x
+                    </button>
+                    <AnimatePresence>
+                      {showSpeedMenu && (
+                        <motion.div
+                          className="absolute bottom-10 left-0 bg-surface border border-elevated rounded-xl overflow-hidden shadow-xl z-10 min-w-[100px]"
+                          initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }}
+                        >
+                          {PLAYBACK_SPEEDS.map((s) => (
+                            <button key={s} onClick={() => changeSpeed(s)}
+                              className={`w-full px-4 py-2.5 text-sm text-left transition-colors hover:bg-elevated ${playbackRate === s ? "text-primary font-semibold" : "text-white"}`}>
+                              {s}x
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
 
-              {/* Sleep Timer */}
-              <div className="relative">
-                <button
-                  onClick={() => { setShowSleepMenu((p) => !p); setShowSpeedMenu(false); }}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface border border-elevated text-sm font-medium hover:border-primary transition-colors ${sleepMinutes > 0 ? "text-primary border-primary" : "text-white"}`}
-                >
-                  <Moon size={14} />
-                  {sleepRemaining > 0 ? formatTime(sleepRemaining) : "Sleep"}
-                </button>
-                <AnimatePresence>
-                  {showSleepMenu && (
-                    <motion.div
-                      className="absolute bottom-10 right-0 bg-surface border border-elevated rounded-xl overflow-hidden shadow-xl z-10 min-w-[130px]"
-                      initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }}
+                  {/* Sleep Timer */}
+                  <div className="relative">
+                    <button
+                      onClick={() => { setShowSleepMenu((p) => !p); setShowSpeedMenu(false); }}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface border border-elevated text-sm font-medium hover:border-primary transition-colors ${sleepMinutes > 0 ? "text-primary border-primary" : "text-white"}`}
                     >
-                      {SLEEP_TIMERS.map((t) => (
-                        <button key={t.minutes} onClick={() => setSleepTimer(t.minutes)}
-                          className={`w-full px-4 py-2.5 text-sm text-left transition-colors hover:bg-elevated ${sleepMinutes === t.minutes ? "text-primary font-semibold" : "text-white"}`}>
-                          {t.label}
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
+                      <Moon size={14} />
+                      {sleepRemaining > 0 ? formatTime(sleepRemaining) : "Sleep"}
+                    </button>
+                    <AnimatePresence>
+                      {showSleepMenu && (
+                        <motion.div
+                          className="absolute bottom-10 right-0 bg-surface border border-elevated rounded-xl overflow-hidden shadow-xl z-10 min-w-[130px]"
+                          initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }}
+                        >
+                          {SLEEP_TIMERS.map((t) => (
+                            <button key={t.minutes} onClick={() => setSleepTimer(t.minutes)}
+                              className={`w-full px-4 py-2.5 text-sm text-left transition-colors hover:bg-elevated ${sleepMinutes === t.minutes ? "text-primary font-semibold" : "text-white"}`}>
+                              {t.label}
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
 

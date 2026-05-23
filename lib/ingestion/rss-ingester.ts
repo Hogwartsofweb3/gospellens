@@ -115,7 +115,9 @@ export async function runRssIngestion() {
             title: item.title,
             description: cleanDescription,
             content_type: contentType,
-            source_url: item.link,
+            source_url: (contentType === "podcast" || contentType === "audio") && item.enclosure?.url 
+              ? item.enclosure.url 
+              : item.link,
             thumbnail_url: (item as any).itunesImage?.href || ministry.logo_url || null,
             duration_seconds: durationSeconds,
             published_at: item.isoDate || item.pubDate ? new Date(item.isoDate || item.pubDate!).toISOString() : new Date().toISOString(),
