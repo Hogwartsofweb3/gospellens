@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   Play, Pause, SkipBack, SkipForward,
@@ -12,22 +13,158 @@ export function MiniPlayer() {
     currentTrack,
     isPlaying,
     currentTime,
+    duration,
     volume,
+    playbackRate,
     togglePlay,
     skipBack,
     skipForward,
     next,
     prev,
     setCurrentTime,
+    setDuration,
     setVolume,
     toggleExpanded,
     close,
   } = usePlayerStore();
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Initialize and clean up global HTML5 Audio engine
+  useEffect(() => {
+    const audio = new Audio();
+    audioRef.current = audio;
+    audio.playbackRate = usePlayerStore.getState().playbackRate;
+
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration);
+    };
+
+    const handleTimeUpdate = () => {
+      // Sync progress time only if seeker is not currently active
+      if (document.activeElement?.getAttribute("type") !== "range") {
+        setCurrentTime(audio.currentTime);
+      }
+    };
+
+    const handleEnded = () => {
+      usePlayerStore.getState().pause();
+      usePlayerStore.getState().next();
+    };
+
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("ended", handleEnded);
+
+    return () => {
+      audio.pause();
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, [setDuration, setCurrentTime]);
+
+  // Sync track src changes
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (currentTrack?.sourceUrl) {
+      const isYouTube = currentTrack.sourceUrl.includes("youtube.com") || currentTrack.sourceUrl.includes("youtu.be");
+      if (!isYouTube) {
+        if (audio.src !== currentTrack.sourceUrl) {
+          audio.src = currentTrack.sourceUrl;
+          audio.load();
+        }
+        if (isPlaying) {
+          audio.play().catch((err) => console.log("Audio autoplay blocked:", err));
+        } else {
+          audio.pause();
+        }
+      } else {
+        audio.pause();
+        audio.src = "";
+      }
+    } else {
+      audio.pause();
+      audio.src = "";
+    }
+  }, [currentTrack?.sourceUrl]);
+
+  // Sync play/pause state changes
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) return;
+    const isYouTube = currentTrack.sourceUrl.includes("youtube.com") || currentTrack.sourceUrl.includes("youtu.be");
+    if (isYouTube) return;
+
+    if (isPlaying) {
+      audio.play().catch((err) => console.log("Audio play blocked:", err));
+    } else {
+      audio.pause();
+    }
+  }, [isPlaying, currentTrack]);
+
+  // Sync volume state
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = volume;
+    }
+  }, [volume]);
+
+  // Sync playback rate state
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.playbackRate = playbackRate;
+    }
+  }, [playbackRate]);
+
+  // Media Session API global integration
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) return;
+    const isYouTube = currentTrack.sourceUrl.includes("youtube.com") || currentTrack.sourceUrl.includes("youtu.be");
+    if (isYouTube) return;
+
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentTrack.title,
+        artist: currentTrack.ministryName,
+        artwork: currentTrack.artworkUrl
+          ? [{ src: currentTrack.artworkUrl, sizes: "512x512", type: "image/jpeg" }]
+          : [],
+      });
+
+      navigator.mediaSession.setActionHandler("play", () => {
+        usePlayerStore.getState().resume();
+      });
+      navigator.mediaSession.setActionHandler("pause", () => {
+        usePlayerStore.getState().pause();
+      });
+      navigator.mediaSession.setActionHandler("seekbackward", () => {
+        usePlayerStore.getState().skipBack();
+      });
+      navigator.mediaSession.setActionHandler("seekforward", () => {
+        usePlayerStore.getState().skipForward();
+      });
+    }
+  }, [currentTrack]);
+
+  // Sync skip and seek events from detail pages
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (Math.abs(audio.currentTime - currentTime) > 1.5) {
+      audio.currentTime = currentTime;
+    }
+  }, [currentTime]);
+
   if (!currentTrack) return null;
 
-  const duration = currentTrack.durationSeconds || 0;
-  const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const trackDuration = duration || currentTrack.durationSeconds || 0;
+  const progressPct = trackDuration > 0 ? (currentTime / trackDuration) * 100 : 0;
 
   return (
     <div
@@ -87,9 +224,15 @@ export function MiniPlayer() {
         <input
           type="range"
           min={0}
-          max={duration || 100}
+          max={trackDuration || 100}
           value={currentTime}
-          onChange={(e) => setCurrentTime(Number(e.target.value))}
+          onChange={(e) => {
+            const val = Number(e.target.value);
+            setCurrentTime(val);
+            if (audioRef.current) {
+              audioRef.current.currentTime = val;
+            }
+          }}
           className="hidden md:block w-32 lg:w-48 h-1 rounded-full accent-primary cursor-pointer"
         />
 

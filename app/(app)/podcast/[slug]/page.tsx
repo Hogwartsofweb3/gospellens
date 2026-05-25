@@ -81,21 +81,32 @@ export default function PodcastPlayerPage() {
   const [showShare, setShowShare] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
 
-  // Player state
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [playbackRate, setPlaybackRate] = useState(1);
+  // Player store state
+  const {
+    currentTrack,
+    isPlaying: storeIsPlaying,
+    currentTime: storeCurrentTime,
+    duration: storeDuration,
+    playbackRate,
+    play: storePlay,
+    pause: storePause,
+    resume: storeResume,
+    setCurrentTime: storeSetTime,
+    setPlaybackRate,
+  } = usePlayerStore();
+
+  const isThisTrack = currentTrack?.id === episode?.id;
+  const isPlaying = isThisTrack && storeIsPlaying;
+  const currentTime = isThisTrack ? storeCurrentTime : 0;
+  const duration = isThisTrack ? storeDuration : (episode?.duration_seconds || 0);
+
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [showSleepMenu, setShowSleepMenu] = useState(false);
   const [sleepMinutes, setSleepMinutes] = useState(0);
   const [sleepRemaining, setSleepRemaining] = useState(0);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const sleepTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const { play: storePlay, pause: storePause } = usePlayerStore();
   const supabase = createClient();
 
   useEffect(() => {
@@ -133,54 +144,15 @@ export default function PodcastPlayerPage() {
     checkBookmark();
   }, [slug]);
 
-  // Setup HTML5 Audio
-  useEffect(() => {
-    if (!episode?.source_url) return;
-    const isYouTube = episode.source_url.includes("youtube.com") || episode.source_url.includes("youtu.be");
-    if (isYouTube) return;
-
-    const audio = new Audio(episode.source_url);
-    audio.playbackRate = playbackRate;
-    audioRef.current = audio;
-
-    audio.addEventListener("loadedmetadata", () => setDuration(audio.duration));
-    audio.addEventListener("timeupdate", () => setCurrentTime(audio.currentTime));
-    audio.addEventListener("ended", () => {
-      setIsPlaying(false);
-      storePause();
-    });
-
-    // Media Session API
-    if ("mediaSession" in navigator && episode) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: episode.title,
-        artist: episode.ministries?.name || "",
-        artwork: episode.thumbnail_url
-          ? [{ src: episode.thumbnail_url, sizes: "512x512", type: "image/jpeg" }]
-          : [],
-      });
-      navigator.mediaSession.setActionHandler("play", togglePlay);
-      navigator.mediaSession.setActionHandler("pause", togglePlay);
-      navigator.mediaSession.setActionHandler("seekbackward", () => skip(-15));
-      navigator.mediaSession.setActionHandler("seekforward", () => skip(15));
-    }
-
-    return () => {
-      audio.pause();
-      audio.src = "";
-    };
-  }, [episode?.source_url]);
-
   const togglePlay = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio || !episode) return;
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-      storePause();
+    if (!episode) return;
+    if (isThisTrack) {
+      if (storeIsPlaying) {
+        storePause();
+      } else {
+        storeResume();
+      }
     } else {
-      audio.play();
-      setIsPlaying(true);
       storePlay({
         id: episode.id,
         title: episode.title,
@@ -190,27 +162,24 @@ export default function PodcastPlayerPage() {
         durationSeconds: episode.duration_seconds,
       });
     }
-  }, [isPlaying, episode]);
+  }, [isThisTrack, storeIsPlaying, episode, storePlay, storePause, storeResume]);
 
   const skip = useCallback((seconds: number) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.currentTime = Math.max(0, Math.min(audio.currentTime + seconds, audio.duration));
-  }, []);
+    if (!isThisTrack) return;
+    storeSetTime(Math.max(0, Math.min(currentTime + seconds, duration)));
+  }, [isThisTrack, currentTime, duration, storeSetTime]);
 
   const seek = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const audio = audioRef.current;
-    if (!audio || !progressRef.current) return;
+    if (!progressRef.current || !isThisTrack) return;
     const rect = progressRef.current.getBoundingClientRect();
     const pct = (e.clientX - rect.left) / rect.width;
-    audio.currentTime = pct * audio.duration;
-  }, []);
+    storeSetTime(pct * duration);
+  }, [isThisTrack, duration, storeSetTime]);
 
   const changeSpeed = useCallback((speed: number) => {
     setPlaybackRate(speed);
-    if (audioRef.current) audioRef.current.playbackRate = speed;
     setShowSpeedMenu(false);
-  }, []);
+  }, [setPlaybackRate]);
 
   const setSleepTimer = useCallback((minutes: number) => {
     if (sleepTimerRef.current) clearInterval(sleepTimerRef.current);

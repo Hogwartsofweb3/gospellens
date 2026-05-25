@@ -13,7 +13,9 @@ interface PlayerState {
   currentTrack: PlayerTrack | null;
   isPlaying: boolean;
   currentTime: number;
+  duration: number;
   volume: number;
+  playbackRate: number;
   queue: PlayerTrack[];
   isExpanded: boolean;
 
@@ -22,7 +24,9 @@ interface PlayerState {
   resume: () => void;
   togglePlay: () => void;
   setCurrentTime: (time: number) => void;
+  setDuration: (duration: number) => void;
   setVolume: (volume: number) => void;
+  setPlaybackRate: (rate: number) => void;
   skipForward: () => void;
   skipBack: () => void;
   next: () => void;
@@ -37,18 +41,22 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   currentTrack: null,
   isPlaying: false,
   currentTime: 0,
+  duration: 0,
   volume: 0.8,
+  playbackRate: 1,
   queue: [],
   isExpanded: false,
 
-  play: (track) => set({ currentTrack: track, isPlaying: true, currentTime: 0 }),
+  play: (track) => set({ currentTrack: track, isPlaying: true, currentTime: 0, duration: 0 }),
   pause: () => set({ isPlaying: false }),
   resume: () => set({ isPlaying: true }),
   togglePlay: () => set((s) => ({ isPlaying: !s.isPlaying })),
   setCurrentTime: (time) => set({ currentTime: time }),
+  setDuration: (duration) => set({ duration }),
   setVolume: (volume) => set({ volume }),
+  setPlaybackRate: (playbackRate) => set({ playbackRate }),
   skipForward: () =>
-    set((s) => ({ currentTime: Math.min(s.currentTime + 15, s.currentTrack?.durationSeconds || s.currentTime + 15) })),
+    set((s) => ({ currentTime: Math.min(s.currentTime + 15, s.duration || s.currentTrack?.durationSeconds || s.currentTime + 15) })),
   skipBack: () => set((s) => ({ currentTime: Math.max(0, s.currentTime - 15) })),
   next: () => {
     const { queue, currentTrack } = get();
