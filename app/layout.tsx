@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Inter, Lora } from "next/font/google";
 import { ToastProvider } from "@/components/ui/Toast";
+import { SplashScreen } from "@/components/ui/SplashScreen";
 import "./globals.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://gospellens.app";
@@ -66,6 +67,7 @@ export default function RootLayout({
       <body
         className={`${poppins.variable} ${inter.variable} ${lora.variable} bg-background text-text-primary min-h-screen`}
       >
+        <SplashScreen />
         <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
