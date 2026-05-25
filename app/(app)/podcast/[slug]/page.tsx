@@ -193,13 +193,12 @@ export default function PodcastPlayerPage() {
       setSleepRemaining(remaining);
       if (remaining <= 0) {
         clearInterval(sleepTimerRef.current!);
-        audioRef.current?.pause();
-        setIsPlaying(false);
+        storePause();
         setSleepMinutes(0);
         setSleepRemaining(0);
       }
     }, 1000);
-  }, []);
+  }, [storePause]);
 
   const toggleBookmark = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
