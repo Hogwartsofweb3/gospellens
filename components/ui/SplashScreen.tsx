@@ -5,7 +5,9 @@ import { useEffect, useState, useRef } from "react";
 export function SplashScreen() {
   const [visible, setVisible] = useState(true);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const logoRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lensRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const raysRef = useRef<SVGSVGElement>(null);
 
@@ -33,19 +35,32 @@ export function SplashScreen() {
       if (elapsed < DURATION_ANIM) {
         // --- 0ms to 1200ms opening animation ---
         if (elapsed <= 400) {
-          // Phase 1: 0ms - 400ms (scale 40% to 108%, fade in, rays expand)
+          // Phase 1: 0ms - 400ms (scale up, slide in, fade in, rays expand)
           const p = elapsed / 400;
           const ep = easeOutCubic(p);
 
-          // Logo scale, opacity, brightness
+          // Logo container scale, opacity, brightness
           const scale = 0.40 + (1.08 - 0.40) * ep;
           const opacity = p;
           const brightness = p;
 
-          if (logoRef.current) {
-            logoRef.current.style.transform = `scale(${scale})`;
-            logoRef.current.style.opacity = String(opacity);
-            logoRef.current.style.filter = `brightness(${brightness})`;
+          if (containerRef.current) {
+            containerRef.current.style.transform = `scale(${scale})`;
+            containerRef.current.style.opacity = String(opacity);
+            containerRef.current.style.filter = `brightness(${brightness})`;
+          }
+
+          // Slide in from left/right
+          // Left part (Lens) slides from -40% to 0%
+          const lensTx = -40 * (1 - ep);
+          if (lensRef.current) {
+            lensRef.current.style.transform = `translateX(${lensTx}%)`;
+          }
+
+          // Right part (Text) slides from 40% to 0%
+          const textTx = 40 * (1 - ep);
+          if (textRef.current) {
+            textRef.current.style.transform = `translateX(${textTx}%)`;
           }
 
           // Rays expand and fade in to 25% opacity
@@ -61,18 +76,22 @@ export function SplashScreen() {
             glowRef.current.style.opacity = String(p);
           }
         } else {
-          // Phase 2: 400ms - 1200ms (scale 108% down to 100%, rays fade out)
+          // Phase 2: 400ms - 1200ms (settles down from 108% to 100%, rays fade out)
           const p = (elapsed - 400) / 800;
           const ep = easeInOutQuad(p);
 
-          // Logo settles to 100% scale
+          // Logo container settles to 100% scale
           const scale = 1.08 - (1.08 - 1.00) * ep;
 
-          if (logoRef.current) {
-            logoRef.current.style.transform = `scale(${scale})`;
-            logoRef.current.style.opacity = "1";
-            logoRef.current.style.filter = "brightness(1)";
+          if (containerRef.current) {
+            containerRef.current.style.transform = `scale(${scale})`;
+            containerRef.current.style.opacity = "1";
+            containerRef.current.style.filter = "brightness(1)";
           }
+
+          // Parts are perfectly merged at 0% translation
+          if (lensRef.current) lensRef.current.style.transform = "translateX(0%)";
+          if (textRef.current) textRef.current.style.transform = "translateX(0%)";
 
           // Rays fade out
           const rayOpacity = 0.25 * (1 - ep);
@@ -183,22 +202,69 @@ export function SplashScreen() {
         <line x1="0" y1="0" x2="260" y2="150" stroke="#93c5fd" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
 
-      {/* Logo */}
-      <img
-        ref={logoRef}
-        src="/Gospel_Lens.png"
-        alt="Gospel Lens"
+      {/* Animated Logo Container */}
+      <div
+        ref={containerRef}
         style={{
+          position: "relative",
           width: "280px",
+          height: "280px",
           maxWidth: "70vw",
-          height: "auto",
-          objectFit: "contain",
+          maxHeight: "70vw",
           zIndex: 9999,
           opacity: 0,
           transform: "scale(0.4)",
           willChange: "transform, opacity, filter",
         }}
-      />
+      >
+        {/* Left Part: Lens & Globe (slides left -> center) */}
+        <div
+          ref={lensRef}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            clipPath: "inset(0 59.5% 0 0)",
+            willChange: "transform",
+          }}
+        >
+          <img
+            src="/Gospel_Lens.png"
+            alt="Gospel Lens - Lens"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+            }}
+          />
+        </div>
+
+        {/* Right Part: Gospel Lens Text (slides right -> center) */}
+        <div
+          ref={textRef}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            clipPath: "inset(0 0 0 40%)",
+            willChange: "transform",
+          }}
+        >
+          <img
+            src="/Gospel_Lens.png"
+            alt="Gospel Lens - Text"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 }
