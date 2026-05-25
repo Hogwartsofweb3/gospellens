@@ -8,6 +8,7 @@ export function SplashScreen() {
   const containerRef = useRef<HTMLDivElement>(null);
   const lensRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
+  const taglineRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const raysRef = useRef<SVGSVGElement>(null);
 
@@ -15,9 +16,9 @@ export function SplashScreen() {
     let startTimestamp: number | null = null;
     let animFrameId: number;
 
-    const DURATION_ANIM = 1200; // 1.2s opening animation
+    const DURATION_ANIM = 2700; // 2.7s opening animation (to match 3s total)
     const DURATION_FADEOUT = 300; // 300ms overlay fadeout
-    const TOTAL_DURATION = DURATION_ANIM + DURATION_FADEOUT;
+    const TOTAL_DURATION = DURATION_ANIM + DURATION_FADEOUT; // 3000ms = exactly 3 seconds
 
     // Easing functions
     const easeOutCubic = (x: number): number => {
@@ -33,10 +34,10 @@ export function SplashScreen() {
       const elapsed = timestamp - startTimestamp;
 
       if (elapsed < DURATION_ANIM) {
-        // --- 0ms to 1200ms opening animation ---
-        if (elapsed <= 400) {
-          // Phase 1: 0ms - 400ms (scale up, slide in, fade in, rays expand)
-          const p = elapsed / 400;
+        // --- 0ms to 2700ms opening animation ---
+        if (elapsed <= 1000) {
+          // Phase 1: 0ms - 1000ms (scale up, three-way slide in, fade in, rays expand)
+          const p = elapsed / 1000;
           const ep = easeOutCubic(p);
 
           // Logo container scale, opacity, brightness
@@ -50,17 +51,22 @@ export function SplashScreen() {
             containerRef.current.style.filter = `brightness(${brightness})`;
           }
 
-          // Slide in from left/right
-          // Left part (Lens) slides from -40% to 0%
-          const lensTx = -40 * (1 - ep);
+          // 1. Lens slides in from left: translateX(-50% -> 0%)
+          const lensTx = -50 * (1 - ep);
           if (lensRef.current) {
             lensRef.current.style.transform = `translateX(${lensTx}%)`;
           }
 
-          // Right part (Text) slides from 40% to 0%
-          const textTx = 40 * (1 - ep);
+          // 2. Gospel Lens text drops from top: translateY(-50% -> 0%)
+          const textTy = -50 * (1 - ep);
           if (textRef.current) {
-            textRef.current.style.transform = `translateX(${textTx}%)`;
+            textRef.current.style.transform = `translateY(${textTy}%)`;
+          }
+
+          // 3. Tagline slides in from right: translateX(50% -> 0%)
+          const taglineTx = 50 * (1 - ep);
+          if (taglineRef.current) {
+            taglineRef.current.style.transform = `translateX(${taglineTx}%)`;
           }
 
           // Rays expand and fade in to 25% opacity
@@ -76,8 +82,8 @@ export function SplashScreen() {
             glowRef.current.style.opacity = String(p);
           }
         } else {
-          // Phase 2: 400ms - 1200ms (settles down from 108% to 100%, rays fade out)
-          const p = (elapsed - 400) / 800;
+          // Phase 2: 1000ms - 2700ms (settles down from 108% to 100%, rays fade out)
+          const p = (elapsed - 1000) / 1700;
           const ep = easeInOutQuad(p);
 
           // Logo container settles to 100% scale
@@ -89,9 +95,10 @@ export function SplashScreen() {
             containerRef.current.style.filter = "brightness(1)";
           }
 
-          // Parts are perfectly merged at 0% translation
+          // All components remain perfectly merged at center
           if (lensRef.current) lensRef.current.style.transform = "translateX(0%)";
-          if (textRef.current) textRef.current.style.transform = "translateX(0%)";
+          if (textRef.current) textRef.current.style.transform = "translateY(0%)";
+          if (taglineRef.current) taglineRef.current.style.transform = "translateX(0%)";
 
           // Rays fade out
           const rayOpacity = 0.25 * (1 - ep);
@@ -108,7 +115,7 @@ export function SplashScreen() {
 
         animFrameId = requestAnimationFrame(animate);
       } else if (elapsed < TOTAL_DURATION) {
-        // --- 1200ms to 1500ms fadeout ---
+        // --- 2700ms to 3000ms fadeout ---
         const p = (elapsed - DURATION_ANIM) / DURATION_FADEOUT;
 
         // Overlay fades out
@@ -217,7 +224,7 @@ export function SplashScreen() {
           willChange: "transform, opacity, filter",
         }}
       >
-        {/* Left Part: Lens & Globe (slides left -> center) */}
+        {/* Component A: Lens & Globe (slides left -> center) */}
         <div
           ref={lensRef}
           style={{
@@ -226,7 +233,7 @@ export function SplashScreen() {
             left: 0,
             width: "100%",
             height: "100%",
-            clipPath: "inset(0 59.5% 0 0)",
+            clipPath: "inset(0 60.5% 0 0)",
             willChange: "transform",
           }}
         >
@@ -241,7 +248,7 @@ export function SplashScreen() {
           />
         </div>
 
-        {/* Right Part: Gospel Lens Text (slides right -> center) */}
+        {/* Component B: Gospel Lens Text (drops top -> center) */}
         <div
           ref={textRef}
           style={{
@@ -250,13 +257,37 @@ export function SplashScreen() {
             left: 0,
             width: "100%",
             height: "100%",
-            clipPath: "inset(0 0 0 40%)",
+            clipPath: "inset(0 0 29.5% 38.5%)",
             willChange: "transform",
           }}
         >
           <img
             src="/Gospel_Lens.png"
             alt="Gospel Lens - Text"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+            }}
+          />
+        </div>
+
+        {/* Component C: One Liner Tagline (slides right -> center) */}
+        <div
+          ref={taglineRef}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            clipPath: "inset(69.5% 0 0 38.5%)",
+            willChange: "transform",
+          }}
+        >
+          <img
+            src="/Gospel_Lens.png"
+            alt="Gospel Lens - Tagline"
             style={{
               width: "100%",
               height: "100%",
