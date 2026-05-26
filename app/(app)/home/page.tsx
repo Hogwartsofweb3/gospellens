@@ -112,27 +112,31 @@ export default function HomePage() {
   const [articles, setArticles] = useState<ContentItem[]>([]);
   const [podcasts, setPodcasts] = useState<ContentItem[]>([]);
   const [videos, setVideos] = useState<ContentItem[]>([]);
+  const [audios, setAudios] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [trendingRes, articlesRes, podcastsRes, videosRes] = await Promise.all([
+        const [trendingRes, articlesRes, podcastsRes, videosRes, audiosRes] = await Promise.all([
           fetch("/api/content/trending"),
           fetch("/api/content?type=article&sort=latest&limit=12"),
           fetch("/api/content?type=podcast&sort=latest&limit=12"),
           fetch("/api/content?type=video&sort=latest&limit=12"),
+          fetch("/api/content?type=audio&sort=latest&limit=12"),
         ]);
 
         const trendingData = await trendingRes.json();
         const articlesData = await articlesRes.json();
         const podcastsData = await podcastsRes.json();
         const videosData = await videosRes.json();
+        const audiosData = await audiosRes.json();
 
         const trendingItems: ContentItem[] = trendingData.data || [];
         const articleItems: ContentItem[] = articlesData.data || [];
         const podcastItems: ContentItem[] = podcastsData.data || [];
         const videoItems: ContentItem[] = videosData.data || [];
+        const audioItems: ContentItem[] = audiosData.data || [];
 
         // Pick hero: rotate across ALL content types (video, podcast, article, audio)
         // Prefer items from this week, then fall back to all-time trending
@@ -161,6 +165,7 @@ export default function HomePage() {
         setArticles(articleItems);
         setPodcasts(podcastItems);
         setVideos(videoItems);
+        setAudios(audioItems);
 
         if (bestHero) {
           setHeroItem(bestHero);
@@ -203,7 +208,14 @@ export default function HomePage() {
           : podcasts.map((item) => <SquareCard key={item.id} item={item} />)}
       </ScrollRow>
 
-      {/* Row 5: Videos */}
+      {/* Row 5: Audio Sermons & Messages */}
+      <ScrollRow title="Audio Sermons & Messages 🔊" seeAllHref="/discover?type=audio">
+        {loading
+          ? Array.from({ length: SKELETON_COUNT }).map((_, i) => <LandscapeCardSkeleton key={i} />)
+          : audios.map((item) => <LandscapeCard key={item.id} item={item} />)}
+      </ScrollRow>
+
+      {/* Row 6: Videos */}
       <ScrollRow title="Sermons & Videos 🎬" seeAllHref="/discover?type=video">
         {loading
           ? Array.from({ length: SKELETON_COUNT }).map((_, i) => <LandscapeCardSkeleton key={i} />)
