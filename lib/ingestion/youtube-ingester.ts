@@ -83,11 +83,11 @@ export async function runYouTubeIngestion() {
         continue;
       }
 
-      // 2. Fetch up to 200 videos (4 pages) from the uploads playlist
+      // 2. Fetch up to 600 videos (12 pages) from the uploads playlist
       let allVideoItems: any[] = [];
       let nextPageToken: string | undefined = undefined;
 
-      for (let page = 0; page < 4; page++) {
+      for (let page = 0; page < 12; page++) {
         // Build params separately to avoid TS7022 circular type inference
         const params: {
           part: string[];
