@@ -23,8 +23,11 @@ const MINISTRIES_SEED = [
     slug: "desiring-god",
     website: "https://www.desiringgod.org",
     rss_feed_urls: [
-      "https://rss.desiringgod.org",                                    // Articles
-      "https://www.desiringgod.org/podcasts/ask-pastor-john.rss",       // Ask Pastor John Podcast
+      "http://rss.desiringgod.org",                                    // Articles
+      "https://feedpress.me/ask-pastor-john",                           // Ask Pastor John Podcast
+      "https://feedpress.me/solid-joys",                                // Solid Joys Daily Devotional
+      "https://feedpress.me/light-and-truth",                           // Light + Truth Podcast
+      "https://feedpress.me/look-at-the-book"                           // Look at the Book Video/Audio Podcast
     ],
     youtube_channel_id: "UCnrFlpro0xfYjz6s5Xa8WWw",
     category: "Reformed Theology",
