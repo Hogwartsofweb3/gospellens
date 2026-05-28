@@ -34,9 +34,15 @@ const mockSession = {
 // ─── Test helpers ─────────────────────────────────────────────────────────────
 function setupMocks(session: typeof mockSession | null = mockSession) {
   mockGetSession.mockResolvedValue({ data: { session } });
-  mockOnAuthStateChange.mockImplementation((_event: unknown, callback: (e: string, s: typeof mockSession | null) => void) => {
-    // Immediately call with current session
-    callback("SIGNED_IN", session);
+  mockOnAuthStateChange.mockImplementation((callback: (e: string, s: typeof mockSession | null) => void) => {
+    // Defer the initial auth state callback to allow the initial loading state to render
+    setTimeout(() => {
+      try {
+        callback("SIGNED_IN", session);
+      } catch (e) {
+        // Handle potential errors if components unmounted
+      }
+    }, 0);
     return { data: { subscription: { unsubscribe: mockUnsubscribe } } };
   });
 }

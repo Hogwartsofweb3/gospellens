@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 
 export function SplashScreen() {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const lensRef = useRef<HTMLDivElement>(null);
@@ -13,6 +13,17 @@ export function SplashScreen() {
   const raysRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
+    const shown = typeof window !== "undefined" && sessionStorage.getItem("gospellens_splash_shown");
+    if (shown) {
+      setVisible(false);
+      return;
+    }
+    
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("gospellens_splash_shown", "true");
+    }
+    setVisible(true);
+
     let startTimestamp: number | null = null;
     let animFrameId: number;
 

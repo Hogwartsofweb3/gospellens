@@ -11,11 +11,19 @@ interface ShareModalProps {
   contentType?: string;
 }
 
-const SOCIAL_OPTIONS = [
+interface ShareOption {
+  name: string;
+  bg: string;
+  getUrl?: (url: string, title: string) => string;
+  onClick?: (url: string, setCopied: (v: boolean) => void) => void;
+  icon: React.ReactNode;
+}
+
+const SOCIAL_OPTIONS: ShareOption[] = [
   {
     name: "WhatsApp",
     bg: "bg-[#25D366]",
-    getUrl: (url: string, title: string) =>
+    getUrl: (url, title) =>
       `https://wa.me/?text=${encodeURIComponent(title + " — " + url)}`,
     icon: (
       <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -24,31 +32,9 @@ const SOCIAL_OPTIONS = [
     ),
   },
   {
-    name: "X (Twitter)",
-    bg: "bg-black border border-white/20",
-    getUrl: (url: string, title: string) =>
-      `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
-    icon: (
-      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-      </svg>
-    ),
-  },
-  {
-    name: "Facebook",
-    bg: "bg-[#1877F2]",
-    getUrl: (url: string) =>
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-    icon: (
-      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-      </svg>
-    ),
-  },
-  {
     name: "Telegram",
     bg: "bg-[#2AABEE]",
-    getUrl: (url: string, title: string) =>
+    getUrl: (url, title) =>
       `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
     icon: (
       <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -57,9 +43,65 @@ const SOCIAL_OPTIONS = [
     ),
   },
   {
+    name: "X / Twitter",
+    bg: "bg-black border border-white/20",
+    getUrl: (url, title) =>
+      `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
+    icon: (
+      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Instagram",
+    bg: "bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]",
+    onClick: (url, setCopied) => {
+      navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    },
+    icon: (
+      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Threads",
+    bg: "bg-[#101010] border border-white/10",
+    getUrl: (url, title) =>
+      `https://threads.net/intent/post?text=${encodeURIComponent(title + " — " + url)}`,
+    icon: (
+      <span className="text-sm font-bold text-white">@</span>
+    ),
+  },
+  {
+    name: "Gmail",
+    bg: "bg-[#ea4335]",
+    getUrl: (url, title) =>
+      `https://mail.google.com/mail/?view=cm&fs=1&to=&su=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`,
+    icon: (
+      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.573l8.073-6.08c1.618-1.214 3.927-.059 3.927 1.964z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Facebook",
+    bg: "bg-[#1877F2]",
+    getUrl: (url) =>
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+    icon: (
+      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </svg>
+    ),
+  },
+  {
     name: "LinkedIn",
     bg: "bg-[#0077b5]",
-    getUrl: (url: string, title: string) =>
+    getUrl: (url) =>
       `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
     icon: (
       <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -68,24 +110,77 @@ const SOCIAL_OPTIONS = [
     ),
   },
   {
+    name: "Pinterest",
+    bg: "bg-[#BD081C]",
+    getUrl: (url, title) =>
+      `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(url)}&description=${encodeURIComponent(title)}`,
+    icon: (
+      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.907 2.17-2.907 1.025 0 1.522.771 1.522 1.697 0 1.03-.656 2.571-.994 4.002-.283 1.194.599 2.169 1.775 2.169 2.13 0 3.769-2.247 3.769-5.493 0-2.872-2.062-4.881-5.012-4.881-3.414 0-5.419 2.561-5.419 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.164 0 7.397 2.967 7.397 6.93 0 4.136-2.607 7.464-6.22 7.464-1.215 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146 1.124.347 2.317.535 3.554.535 6.621 0 11.988-5.367 11.988-11.987C24 5.368 18.633 0 12.017 0z" />
+      </svg>
+    ),
+  },
+  {
     name: "Reddit",
     bg: "bg-[#FF4500]",
-    getUrl: (url: string, title: string) =>
+    getUrl: (url, title) =>
       `https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
     icon: (
       <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.509 1.183-.84 2.815-1.388 4.616-1.467l.889-4.156a.222.222 0 0 1 .264-.17l3.056.643a1.244 1.244 0 0 1 1.196-.857zm-8.625 9.176c-.63 0-1.144.514-1.144 1.144s.514 1.144 1.144 1.144 1.144-.514 1.144-1.144-.514-1.144-1.144-1.144zm7.25 0c-.63 0-1.144.514-1.144 1.144s.514 1.144 1.144 1.144 1.144-.514 1.144-1.144-.514-1.144-1.144-1.144zm-3.624 3.712c-1.524 0-2.525-.366-2.553-.377a.24.24 0 0 1-.137-.309.24.24 0 0 1 .309-.137c.05.016.907.34 2.381.34 1.474 0 2.33-.324 2.381-.34a.24.24 0 0 1 .309.137.24.24 0 0 1-.137.309c-.028.01-1.029.377-2.553.377z" />
+        <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.509 1.183-.84 2.815-1.388 4.616-1.467l.889-4.156a.222.222 0 0 1 .264-.17l3.056.643a1.244 1.244 0 0 1 1.196-.857zm-8.625 9.176c-.63 0-1.144.514-1.144 1.144s.514 1.144 1.144 1.144 .514-.514 1.144-1.144-.514-1.144-1.144-1.144zm7.25 0c-.63 0-1.144.514-1.144 1.144s.514 1.144 1.144 1.144 1.144-.514 1.144-1.144-.514-1.144-1.144-1.144zm-3.624 3.712c-1.524 0-2.525-.366-2.553-.377a.24.24 0 0 1-.137-.309.24.24 0 0 1 .309-.137c.05.016.907.34 2.381.34 1.474 0 2.33-.324 2.381-.34a.24.24 0 0 1 .309.137.24.24 0 0 1-.137.309c-.028.01-1.029.377-2.553.377z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Skype",
+    bg: "bg-[#00AFF0]",
+    getUrl: (url, title) =>
+      `https://web.skype.com/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+    icon: (
+      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M23.275 14.86c0-.284-.025-.572-.072-.857.368-.69.578-1.464.578-2.28 0-2.735-2.22-4.954-4.956-4.954-.816 0-1.587.21-2.277.58-.285-.05-.573-.075-.857-.075-4.22 0-7.643 3.42-7.643 7.638 0 .285.025.573.072.858-.368.687-.577 1.463-.577 2.276 0 2.736 2.22 4.955 4.957 4.955.816 0 1.588-.21 2.278-.58.284.05.572.076.857.076 4.22 0 7.643-3.42 7.643-7.637zm-12.923-2.18c0-1.282.887-2.072 2.327-2.072.84 0 1.527.288 1.947.81.18.225.132.553-.105.717-.23.158-.553.11-.715-.11-.22-.272-.61-.417-1.127-.417-.692 0-1.345.33-1.345 1.1 0 .666.398 1.01 1.705 1.346 1.758.452 2.656 1.096 2.656 2.457 0 1.533-1.258 2.296-2.744 2.296-.99 0-1.782-.3-2.273-.865-.185-.213-.146-.543.087-.714.224-.165.55-.125.727.08.318.368.835.6 1.46.6.93 0 1.756-.37 1.756-1.365 0-.766-.544-1.077-1.76-1.378-1.597-.393-2.643-.997-2.643-2.484z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Viber",
+    bg: "bg-[#7360F2]",
+    getUrl: (url, title) =>
+      `https://3g.viber.com/share?text=${encodeURIComponent(title + " — " + url)}`,
+    icon: (
+      <span className="text-xs font-extrabold text-white">V</span>
+    ),
+  },
+  {
+    name: "Tumblr",
+    bg: "bg-[#35465C]",
+    getUrl: (url, title) =>
+      `https://www.tumblr.com/widgets/share/tool?canonicalUrl=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
+    icon: (
+      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M14.536 21.688c-.015.066-.135.099-.197.099-.482 0-.715-.315-.715-.847v-7.234h2.51v-2.31h-2.51V6.924a.1.1 0 0 0-.1-.1h-2.607a.1.1 0 0 0-.1.1v4.475h-1.63c-.066 0-.1.033-.1.1v2.21c0 .066.033.1.1.1h1.63v7.914c0 2.456 1.83 3.287 3.818 3.287 1.545 0 2.624-.398 2.624-.398a.1.1 0 0 0 .05-.083v-2.634a.1.1 0 0 0-.083-.1z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Pocket",
+    bg: "bg-[#EE4056]",
+    getUrl: (url, title) =>
+      `https://getpocket.com/save?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
+    icon: (
+      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 0c-6.627 0-12 5.373-12 12v3.743c0 4.549 3.708 8.257 8.257 8.257h7.486c4.549 0 8.257-3.708 8.257-8.257v-3.743c0-6.627-5.373-12-12-12zm6.273 10.428l-5.312 5.258c-.524.524-1.378.524-1.902 0l-5.312-5.258c-.544-.544-.544-1.42 0-1.964.534-.534 1.411-.534 1.945 0l4.385 4.341 4.385-4.341c.534-.534 1.411-.534 1.945 0 .544.544.544 1.42 0 1.964z" />
       </svg>
     ),
   },
   {
     name: "Email",
-    bg: "bg-[#333333]",
-    getUrl: (url: string, title: string) =>
+    bg: "bg-[#444444]",
+    getUrl: (url, title) =>
       `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`,
     icon: (
-      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
       </svg>
     ),
   },
@@ -93,6 +188,7 @@ const SOCIAL_OPTIONS = [
 
 export function ShareModal({ isOpen, onClose, title, contentType = "content" }: ShareModalProps) {
   const [linkCopied, setLinkCopied] = useState(false);
+  const [customMsg, setCustomMsg] = useState<string | null>(null);
 
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
@@ -110,7 +206,21 @@ export function ShareModal({ isOpen, onClose, title, contentType = "content" }: 
   const copyLink = () => {
     navigator.clipboard.writeText(currentUrl);
     setLinkCopied(true);
+    setCustomMsg(null);
     setTimeout(() => setLinkCopied(false), 2500);
+  };
+
+  const handleCustomClick = (opt: ShareOption) => {
+    if (opt.onClick) {
+      opt.onClick(currentUrl, (copied) => {
+        setLinkCopied(copied);
+        setCustomMsg(`${opt.name} Link Copied!`);
+        setTimeout(() => {
+          setLinkCopied(false);
+          setCustomMsg(null);
+        }, 2500);
+      });
+    }
   };
 
   const supportsNativeShare =
@@ -120,7 +230,7 @@ export function ShareModal({ isOpen, onClose, title, contentType = "content" }: 
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -146,7 +256,7 @@ export function ShareModal({ isOpen, onClose, title, contentType = "content" }: 
                 <X size={16} />
               </button>
             </div>
-            <p className="text-text-secondary text-sm mb-5 line-clamp-2 leading-snug">{title}</p>
+            <p className="text-text-secondary text-sm mb-4 line-clamp-2 leading-snug">{title}</p>
 
             {/* Native share button (shows on mobile/supported browsers) */}
             {supportsNativeShare && (
@@ -159,22 +269,40 @@ export function ShareModal({ isOpen, onClose, title, contentType = "content" }: 
             )}
 
             {/* Social share grid */}
-            <div className="grid grid-cols-4 gap-3 mb-4">
-              {SOCIAL_OPTIONS.map((opt) => (
-                <a
-                  key={opt.name}
-                  href={opt.getUrl(currentUrl, title)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={opt.name}
-                  className={`flex flex-col items-center gap-1.5 p-3 rounded-xl ${opt.bg} hover:opacity-85 transition-opacity cursor-pointer`}
-                >
-                  {opt.icon}
-                  <span className="text-white text-[10px] font-medium leading-tight text-center">
-                    {opt.name.split(" ")[0]}
-                  </span>
-                </a>
-              ))}
+            <div className="grid grid-cols-4 gap-2.5 mb-5 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
+              {SOCIAL_OPTIONS.map((opt) => {
+                if (opt.getUrl) {
+                  return (
+                    <a
+                      key={opt.name}
+                      href={opt.getUrl(currentUrl, title)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={opt.name}
+                      className={`flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl ${opt.bg} hover:opacity-85 transition-opacity cursor-pointer aspect-square`}
+                    >
+                      {opt.icon}
+                      <span className="text-white text-[9px] font-medium leading-tight text-center truncate w-full">
+                        {opt.name.split(" ")[0]}
+                      </span>
+                    </a>
+                  );
+                } else {
+                  return (
+                    <button
+                      key={opt.name}
+                      onClick={() => handleCustomClick(opt)}
+                      title={opt.name}
+                      className={`flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl ${opt.bg} hover:opacity-85 transition-opacity cursor-pointer aspect-square w-full`}
+                    >
+                      {opt.icon}
+                      <span className="text-white text-[9px] font-medium leading-tight text-center truncate w-full">
+                        {opt.name.split(" ")[0]}
+                      </span>
+                    </button>
+                  );
+                }
+              })}
             </div>
 
             {/* Copy link */}
@@ -184,7 +312,7 @@ export function ShareModal({ isOpen, onClose, title, contentType = "content" }: 
             >
               {linkCopied ? (
                 <>
-                  <Check size={16} className="text-primary" /> Link Copied!
+                  <Check size={16} className="text-primary" /> {customMsg || "Link Copied!"}
                 </>
               ) : (
                 <>

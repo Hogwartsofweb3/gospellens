@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:unit": "jest --testPathPattern=__tests__/unit",
+    "test:unit": "jest --testPathPatterns=__tests__/unit",
     "test:e2e": "playwright test",
     "test": "npm run test:unit && npm run test:e2e"
   },

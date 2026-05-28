@@ -3,7 +3,7 @@ import { GospelLensLogo } from "@/components/ui/Logo";
 
 export function Footer() {
   return (
-    <footer className="pt-20 pb-10 px-6 md:px-12 bg-[#121212] border-t border-border mt-12">
+    <footer className="pt-20 pb-[160px] md:pb-10 px-6 md:px-12 bg-[#121212] border-t border-border mt-12">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-16">
           {/* Brand Column */}
