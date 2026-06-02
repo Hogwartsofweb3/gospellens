@@ -26,11 +26,9 @@ export function AppNav() {
     <>
       {/* ── Desktop / Tablet Header ─────────────────────────────── */}
       <header
-        className="fixed top-0 left-0 right-0 z-40 flex items-center px-4 md:px-10"
+        className="fixed top-0 left-0 right-0 z-40 flex items-center px-4 md:px-10 bg-background border-b border-border"
         style={{
           height: 64,
-          backgroundColor: "#0F0F0F",
-          borderBottom: "1px solid #2A2A2A",
         }}
       >
         {/* Logo */}
@@ -49,7 +47,7 @@ export function AppNav() {
                 className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   isActive
                     ? "text-primary bg-primary/10"
-                    : "text-text-secondary hover:text-white hover:bg-elevated"
+                    : "text-text-secondary hover:text-text-primary hover:bg-elevated"
                 }`}
               >
                 <link.Icon size={16} />
@@ -87,8 +85,8 @@ export function AppNav() {
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
             {mobileOpen
-              ? <X className="w-5 h-5 text-white" />
-              : <Menu className="w-5 h-5 text-white" />}
+              ? <X className="w-5 h-5 text-text-primary" />
+              : <Menu className="w-5 h-5 text-text-primary" />}
           </button>
         </div>
       </header>
@@ -123,7 +121,7 @@ export function AppNav() {
                       className={`flex items-center gap-3 py-3.5 px-4 rounded-xl text-base font-medium transition-colors ${
                         isActive
                           ? "text-primary bg-primary/10"
-                          : "text-white hover:bg-elevated"
+                          : "text-text-primary hover:bg-elevated"
                       }`}
                     >
                       <link.Icon size={20} />
@@ -135,14 +133,14 @@ export function AppNav() {
                 <div className="border-t border-border my-2 mx-2" />
                 <Link
                   href="/profile"
-                  className="flex items-center gap-3 py-3.5 px-4 rounded-xl text-base font-medium text-white hover:bg-elevated transition-colors"
+                  className="flex items-center gap-3 py-3.5 px-4 rounded-xl text-base font-medium text-text-primary hover:bg-elevated transition-colors"
                 >
                   <User size={20} />
                   My Profile
                 </Link>
                 <Link
                   href="/bookmarks"
-                  className="flex items-center gap-3 py-3.5 px-4 rounded-xl text-base font-medium text-white hover:bg-elevated transition-colors"
+                  className="flex items-center gap-3 py-3.5 px-4 rounded-xl text-base font-medium text-text-primary hover:bg-elevated transition-colors"
                 >
                   <Bookmark size={20} />
                   My Bookmarks

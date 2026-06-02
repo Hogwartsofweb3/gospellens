@@ -271,7 +271,7 @@ export function SquareCard({ item }: { item: ContentItem }) {
       </Link>
 
       <div>
-        <p className="text-white text-[13px] font-medium line-clamp-2 leading-snug">{item.title}</p>
+        <p className="text-text-primary text-[13px] font-medium line-clamp-2 leading-snug">{item.title}</p>
         {item.duration_seconds && (
           <p className="text-text-secondary text-[11px] mt-0.5">{formatDuration(item.duration_seconds)}</p>
         )}

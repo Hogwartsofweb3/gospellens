@@ -66,7 +66,7 @@ function HeroBanner({ item }: { item: ContentItem | null }) {
           {/* Ministry row */}
           {item.ministries && (
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-text-secondary text-sm">{item.ministries.name}</span>
+              <span className="text-white/70 text-sm">{item.ministries.name}</span>
               {item.ministries.is_verified && (
                 <span className="text-primary text-xs">✓</span>
               )}
@@ -80,7 +80,7 @@ function HeroBanner({ item }: { item: ContentItem | null }) {
 
           {/* Description */}
           {item.description && (
-            <p className="text-text-secondary text-sm line-clamp-2 mb-6 max-w-lg">
+            <p className="text-white/80 text-sm line-clamp-2 mb-6 max-w-lg">
               {item.description}
             </p>
           )}
