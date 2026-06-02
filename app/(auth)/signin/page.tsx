@@ -33,7 +33,7 @@ export default function SignInPage() {
     }
   };
 
-  const handleOAuthSignIn = async (provider: "google" | "apple") => {
+  const handleOAuthSignIn = async (provider: "google") => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
@@ -134,18 +134,6 @@ export default function SignInPage() {
             />
           </svg>
           Google
-        </button>
-        <button
-          onClick={() => handleOAuthSignIn("apple")}
-          className="flex items-center justify-center gap-3 w-full py-2.5 bg-white text-black font-medium rounded-md hover:bg-gray-100 transition-colors"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
-            <path
-              fill="currentColor"
-              d="M16.36 10.59c-.06-2.58 2.09-3.84 2.19-3.9-1.21-1.78-3.08-2.01-3.76-2.04-1.6-.16-3.13.94-3.94.94-.82 0-2.08-.91-3.41-.89-1.74.02-3.35 1.01-4.24 2.58-1.83 3.17-.47 7.84 1.3 10.42.87 1.25 1.89 2.65 3.23 2.6 1.29-.05 1.78-.83 3.35-.83 1.55 0 2.02.83 3.37.8 1.37-.02 2.25-1.28 3.11-2.54.99-1.46 1.4-2.88 1.43-2.95-.03-.02-2.73-1.04-2.63-4.19zM14.99 4.31c.71-.85 1.18-2.03 1.05-3.21-1.01.04-2.24.67-2.97 1.54-.65.77-1.22 1.98-1.07 3.13 1.13.09 2.28-.61 2.99-1.46z"
-            />
-          </svg>
-          Apple
         </button>
       </div>
 
