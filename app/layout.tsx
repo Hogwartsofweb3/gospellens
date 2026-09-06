@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins, Inter, Lora } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { ToastProvider } from "@/components/ui/Toast";
 import { SplashScreen } from "@/components/ui/SplashScreen";
 import "./globals.css";
@@ -69,6 +70,7 @@ export default function RootLayout({
       >
         <SplashScreen />
         <ToastProvider>{children}</ToastProvider>
+        <Analytics />
       </body>
     </html>
   );
