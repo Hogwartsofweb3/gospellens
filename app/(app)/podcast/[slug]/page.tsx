@@ -456,6 +456,20 @@ export default function PodcastPlayerPage() {
           </div>
         </div>
 
+        {/* Ask a Question Banner */}
+        <div className="mt-8 rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 px-5 py-5 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-white font-semibold text-sm mb-0.5">Have a question about this topic?</p>
+            <p className="text-text-secondary text-xs">Ask our team anything about theology or the Christian faith.</p>
+          </div>
+          <Link
+            href="/ask"
+            className="flex-shrink-0 px-4 py-2 rounded-full bg-primary text-white text-xs font-semibold hover:bg-primary/90 transition-colors shadow-glow-pink whitespace-nowrap"
+          >
+            Ask a Question
+          </Link>
+        </div>
+
         {/* More Episodes */}
         {related.length > 0 && (
           <div className="mt-12">
