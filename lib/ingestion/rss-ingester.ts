@@ -1,6 +1,8 @@
 import Parser from "rss-parser";
 import sanitizeHtml from "sanitize-html";
 import { createClient } from "@supabase/supabase-js";
+import { Readability } from "@mozilla/readability";
+import { JSDOM } from "jsdom";
 
 // We use service role key for ingestion so it can bypass RLS for inserting
 const supabase = createClient(
@@ -15,9 +17,14 @@ const parser = new Parser({
       ["itunes:duration", "itunesDuration"],
       ["itunes:image", "itunesImage"],
       ["itunes:episode", "itunesEpisode"],
+      ["media:content", "mediaContent"],
+      ["media:thumbnail", "mediaThumbnail"],
     ],
   },
 });
+
+// Helper: polite delay between HTTP requests
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // Helper for auto-tagging
 function autoTagContent(title: string, description: string, baseTags: string[]): string[] {
@@ -45,7 +52,89 @@ function parseDuration(duration: string | undefined): number | null {
   const parts = duration.split(":").map(Number);
   if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
   if (parts.length === 2) return parts[0] * 60 + parts[1];
-  return parts[0] || null; // Return as-is if it's already in seconds format
+  return parts[0] || null;
+}
+
+// Sanitize allowed HTML tags for article body
+const ARTICLE_ALLOWED_TAGS = sanitizeHtml.defaults.allowedTags.concat([
+  "img", "h1", "h2", "h3", "h4", "h5", "figure", "figcaption", "picture", "source",
+]);
+const ARTICLE_ALLOWED_ATTRS = {
+  ...sanitizeHtml.defaults.allowedAttributes,
+  img: ["src", "alt", "width", "height", "loading"],
+  a: ["href", "title", "target", "rel"],
+  "*": ["class"],
+};
+
+/**
+ * Fetch the full article HTML from a URL using @mozilla/readability.
+ * Returns { content, thumbnail } where content is clean sanitized HTML
+ * and thumbnail is the OpenGraph image URL (or null).
+ */
+async function fetchFullArticleContent(url: string, fallbackThumbnail: string | null): Promise<{
+  content: string | null;
+  thumbnail: string | null;
+}> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+    });
+    clearTimeout(timeout);
+
+    if (!res.ok) return { content: null, thumbnail: fallbackThumbnail };
+
+    const html = await res.text();
+    const dom = new JSDOM(html, { url });
+    const doc = dom.window.document;
+
+    // Extract OpenGraph / Twitter thumbnail
+    let thumbnail: string | null = fallbackThumbnail;
+    const ogImage =
+      doc.querySelector('meta[property="og:image"]')?.getAttribute("content") ||
+      doc.querySelector('meta[name="twitter:image"]')?.getAttribute("content") ||
+      doc.querySelector('meta[property="og:image:secure_url"]')?.getAttribute("content");
+    if (ogImage && ogImage.startsWith("http")) {
+      thumbnail = ogImage;
+    }
+
+    // Extract main article content using Readability
+    const reader = new Readability(doc, {
+      charThreshold: 200, // minimum character count to consider it readable
+    });
+    const article = reader.parse();
+
+    if (!article || !article.content || article.content.length < 200) {
+      return { content: null, thumbnail };
+    }
+
+    // Sanitize the extracted HTML
+    const cleanContent = sanitizeHtml(article.content, {
+      allowedTags: ARTICLE_ALLOWED_TAGS,
+      allowedAttributes: ARTICLE_ALLOWED_ATTRS,
+      allowedSchemes: ["http", "https", "mailto", "data"],
+      transformTags: {
+        a: sanitizeHtml.simpleTransform("a", {
+          target: "_blank",
+          rel: "noopener noreferrer",
+        }),
+      },
+    });
+
+    return { content: cleanContent || null, thumbnail };
+  } catch (err: any) {
+    if (err.name !== "AbortError") {
+      console.warn(`[fetch-content] Failed for ${url}: ${err.message}`);
+    }
+    return { content: null, thumbnail: fallbackThumbnail };
+  }
 }
 
 export async function runRssIngestion() {
@@ -62,7 +151,7 @@ export async function runRssIngestion() {
     return;
   }
 
-  const stats = { fetched: 0, inserted: 0, skipped: 0, errors: 0 };
+  const stats = { fetched: 0, inserted: 0, skipped: 0, errors: 0, enriched: 0 };
 
   for (const ministry of ministries) {
     if (!ministry.rss_feed_urls || ministry.rss_feed_urls.length === 0) continue;
@@ -84,7 +173,7 @@ export async function runRssIngestion() {
           if (item.enclosure && item.enclosure.type && item.enclosure.type.startsWith("audio")) {
             contentType = ministry.display_as === "podcast" ? "podcast" : "audio";
           }
-          
+
           // Ligonier / New Advent specific feed-level tagging
           let feedSpecificTags: string[] = [];
           if (ministry.slug === "ligonier-ministries" && feedUrl.includes("r1ABLRDvACcJDKzb")) feedSpecificTags.push("Articles");
@@ -96,32 +185,61 @@ export async function runRssIngestion() {
           const combinedBaseTags = [...(ministry.topic_tags || []), ...feedSpecificTags];
           const topicTags = autoTagContent(item.title, item.contentSnippet || "", combinedBaseTags);
 
-          // Preserve safe HTML for in-app reading
-          const rawContent = (item as any)["content:encoded"] || item.content || item.contentSnippet || "";
-          const cleanDescription = rawContent 
-            ? sanitizeHtml(rawContent, { 
-                allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'h1', 'h2' ]),
-                allowedAttributes: {
-                  ...sanitizeHtml.defaults.allowedAttributes,
-                  'img': ['src', 'alt', 'width', 'height']
-                }
-              }) 
+          // Get RSS-provided content (often only a summary/excerpt)
+          const rawRssContent = (item as any)["content:encoded"] || item.content || item.contentSnippet || "";
+          const rssContent = rawRssContent
+            ? sanitizeHtml(rawRssContent, {
+                allowedTags: ARTICLE_ALLOWED_TAGS,
+                allowedAttributes: ARTICLE_ALLOWED_ATTRS,
+              })
             : null;
 
+          // Get RSS-provided thumbnail
+          const rssThumbnail =
+            (item as any).itunesImage?.href ||
+            (item as any).mediaContent?.["$"]?.url ||
+            (item as any).mediaThumbnail?.["$"]?.url ||
+            null;
+
           const durationSeconds = parseDuration(item.itunesDuration as string);
-          
+          const articleUrl = item.link!;
+
+          // For articles: always try to fetch full content + real thumbnail from the source page
+          let fullContent: string | null = null;
+          let finalThumbnail: string | null = rssThumbnail || ministry.logo_url || null;
+
+          if (contentType === "article") {
+            await delay(800); // polite crawl delay
+            const fetched = await fetchFullArticleContent(articleUrl, finalThumbnail);
+            if (fetched.content) {
+              fullContent = fetched.content;
+              stats.enriched++;
+            }
+            if (fetched.thumbnail) {
+              finalThumbnail = fetched.thumbnail;
+            }
+          }
+
+          // Use full content if available, fallback to RSS content
+          const finalContent = fullContent || rssContent;
+
           const payload = {
             ministry_id: ministry.id,
             title: item.title,
-            description: cleanDescription,
+            description: finalContent,
             content_type: contentType,
-            source_url: (contentType === "podcast" || contentType === "audio") && item.enclosure?.url 
-              ? item.enclosure.url 
-              : item.link,
-            thumbnail_url: (item as any).itunesImage?.href || ministry.logo_url || null,
+            source_url:
+              (contentType === "podcast" || contentType === "audio") && item.enclosure?.url
+                ? item.enclosure.url
+                : articleUrl,
+            thumbnail_url: finalThumbnail,
             duration_seconds: durationSeconds,
-            published_at: item.isoDate || item.pubDate ? new Date(item.isoDate || item.pubDate!).toISOString() : new Date().toISOString(),
+            published_at:
+              item.isoDate || item.pubDate
+                ? new Date(item.isoDate || item.pubDate!).toISOString()
+                : new Date().toISOString(),
             topic_tags: topicTags,
+            content_fetched: contentType === "article" && !!fullContent,
           };
 
           // Upsert using source_url constraint to avoid duplicates
@@ -140,16 +258,15 @@ export async function runRssIngestion() {
         // Update tracking metrics
         await supabase
           .from("ministries")
-          .update({ 
+          .update({
             last_ingested_at: new Date().toISOString(),
-            ingestion_error_count: 0 // reset on success
+            ingestion_error_count: 0,
           })
           .eq("id", ministry.id);
-
       } catch (err) {
         console.error(`Error processing feed ${feedUrl} for ${ministry.name}:`, err);
         stats.errors++;
-        await supabase.rpc('increment_ingestion_error', { min_id: ministry.id });
+        await supabase.rpc("increment_ingestion_error", { min_id: ministry.id });
       }
     }
   }

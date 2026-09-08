@@ -66,7 +66,10 @@ const MINISTRIES_SEED = [
     name: "Monergism",
     slug: "monergism",
     website: "https://www.monergism.com",
-    rss_feed_urls: ["https://www.monergism.com/blog/feed"],
+    rss_feed_urls: [
+      "https://www.monergism.com/blog/feed",   // Blog posts
+      "https://www.monergism.com/rss.xml",      // Directory of Theology feed (500+ resources)
+    ],
     category: "Reformed Theology",
     description: "Monergism is a comprehensive resource for Reformed and evangelical theology, featuring sermons, articles, and books from trusted Christian scholars.",
     is_verified: true,

@@ -4,23 +4,51 @@ import { withSentryConfig } from "@sentry/nextjs";
 const nextConfig = {
   images: {
     remotePatterns: [
+      // YouTube thumbnails
       { protocol: "https", hostname: "i.ytimg.com" },
       { protocol: "https", hostname: "img.youtube.com" },
+      { protocol: "https", hostname: "**.ytimg.com" },
+      // Supabase storage
       { protocol: "https", hostname: "**.supabase.co" },
       { protocol: "https", hostname: "**.supabase.in" },
+      // AWS / CloudFront CDNs (used by TGC, DG, many ministries)
       { protocol: "https", hostname: "**.cloudfront.net" },
       { protocol: "https", hostname: "**.amazonaws.com" },
-      { protocol: "https", hostname: "images.unsplash.com" },
+      // Google services
       { protocol: "https", hostname: "**.googleapis.com" },
       { protocol: "https", hostname: "**.gstatic.com" },
-      { protocol: "https", hostname: "img.icons8.com" },
+      // Ministry official websites
       { protocol: "https", hostname: "www.desiringgod.org" },
+      { protocol: "https", hostname: "**.desiringgod.org" },
       { protocol: "https", hostname: "www.thegospelcoalition.org" },
+      { protocol: "https", hostname: "**.thegospelcoalition.org" },
       { protocol: "https", hostname: "www.ligonier.org" },
+      { protocol: "https", hostname: "**.ligonier.org" },
+      { protocol: "https", hostname: "renewingyourmind.ligonier.org" },
       { protocol: "https", hostname: "www.gty.org" },
       { protocol: "https", hostname: "bibleproject.com" },
+      { protocol: "https", hostname: "**.bibleproject.com" },
       { protocol: "https", hostname: "gospelinlife.com" },
       { protocol: "https", hostname: "www.monergism.com" },
+      { protocol: "https", hostname: "monergism.com" },
+      // Common image CDNs used by ministry websites
+      { protocol: "https", hostname: "**.wp.com" },
+      { protocol: "https", hostname: "**.wordpress.com" },
+      { protocol: "https", hostname: "**.squarespace-cdn.com" },
+      { protocol: "https", hostname: "images.squarespace-cdn.com" },
+      { protocol: "https", hostname: "**.imgix.net" },
+      { protocol: "https", hostname: "**.fastly.net" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "**.cloudinary.com" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "img.icons8.com" },
+      // Podcast image CDNs
+      { protocol: "https", hostname: "**.podbean.com" },
+      { protocol: "https", hostname: "pbcdn1.podbean.com" },
+      { protocol: "https", hostname: "**.simplecast.com" },
+      { protocol: "https", hostname: "**.buzzsprout.com" },
+      { protocol: "https", hostname: "**.libsyn.com" },
+      { protocol: "https", hostname: "**.transistor.fm" },
       { protocol: "http", hostname: "localhost" },
     ],
   },
@@ -39,8 +67,8 @@ const nextConfig = {
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' *.posthog.com app.posthog.com",
               // API connections to Supabase, PostHog, Sentry, Upstash
               "connect-src 'self' *.supabase.co *.supabase.in wss://*.supabase.co *.sentry.io *.posthog.com app.posthog.com *.upstash.io",
-              // Images from YouTube, Supabase Storage, CDNs, Icons8, and Ministry official websites
-              "img-src 'self' data: blob: i.ytimg.com img.youtube.com *.supabase.co *.supabase.in *.amazonaws.com *.cloudfront.net *.googleapis.com img.icons8.com www.desiringgod.org www.thegospelcoalition.org www.ligonier.org www.gty.org bibleproject.com gospelinlife.com www.monergism.com",
+              // Images: allow from any HTTPS source (thumbnails come from many ministry CDNs)
+              "img-src 'self' data: blob: https: i.ytimg.com img.youtube.com *.ytimg.com *.supabase.co *.supabase.in *.amazonaws.com *.cloudfront.net *.googleapis.com img.icons8.com www.desiringgod.org *.desiringgod.org www.thegospelcoalition.org *.thegospelcoalition.org www.ligonier.org *.ligonier.org www.gty.org bibleproject.com *.bibleproject.com gospelinlife.com www.monergism.com *.wp.com *.wordpress.com *.squarespace-cdn.com *.imgix.net *.fastly.net *.cloudinary.com res.cloudinary.com *.podbean.com pbcdn1.podbean.com",
               // YouTube embeds only
               "frame-src 'self' *.youtube.com youtube.com",
               // Google Fonts

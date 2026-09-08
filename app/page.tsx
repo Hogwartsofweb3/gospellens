@@ -466,6 +466,50 @@ function MinistriesSection() {
   );
 }
 
+// ── Ask Section ────────────────────────────────────────────────────────────
+function AskSection() {
+  return (
+    <section className="py-24 px-6 md:px-12">
+      <div className="max-w-3xl mx-auto text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20 mb-5 tracking-widest uppercase">
+            Ask Us
+          </span>
+          <h2 className="font-poppins font-bold text-white text-3xl md:text-4xl mb-4 leading-tight">
+            Got a theology question?
+          </h2>
+          <p className="text-text-secondary text-base leading-relaxed mb-8 max-w-xl mx-auto">
+            Whether it&apos;s about doctrine, Scripture, prayer, or Christian living — ask anything. Our team reads every question.
+          </p>
+          <div className="flex flex-wrap justify-center gap-2 mb-10">
+            {["Salvation & Grace", "The Trinity", "Prayer", "Bible Study", "End Times", "Church Life"].map((t) => (
+              <span
+                key={t}
+                className="px-3 py-1.5 rounded-full text-xs border border-elevated text-text-secondary"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+          <Link
+            href="/ask"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors shadow-glow-pink"
+          >
+            Ask a Question →
+          </Link>
+          <p className="text-text-muted text-xs mt-4">
+            Selected answers may be featured on Gospel Lens
+          </p>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 // ── Main Export ───────────────────────────────────────────────────────────
 export default function LandingPage() {
   return (
@@ -475,6 +519,7 @@ export default function LandingPage() {
       <FeaturesSection />
       <ContentPreviewSection />
       <MinistriesSection />
+      <AskSection />
       <Footer />
     </div>
   );

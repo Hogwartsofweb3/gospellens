@@ -24,6 +24,7 @@ interface ContentItem {
   published_at: string | null;
   topic_tags: string[];
   ministry_id: string;
+  content_fetched: boolean;
   ministries: {
     name: string;
     logo_url: string | null;
@@ -152,6 +153,7 @@ export default function ArticleReaderPage() {
   }
 
   const ministry = article.ministries;
+  const hasFullContent = !!(article.description && article.description.length > 300);
   const readTime = estimateReadTime(article.description || "");
 
   return (
@@ -249,23 +251,67 @@ export default function ArticleReaderPage() {
         )}
 
         {/* Article Body */}
-        <div
-          className="article-body"
-          style={{ fontSize: `${fontSize}px` }}
-          dangerouslySetInnerHTML={{ __html: article.description || "<p>No content available. Visit the original article below.</p>" }}
-        />
+        {hasFullContent ? (
+          <div
+            className="article-body"
+            style={{ fontSize: `${fontSize}px` }}
+            dangerouslySetInnerHTML={{ __html: article.description }}
+          />
+        ) : (
+          <div className="article-body-empty">
+            <div className="empty-content-card">
+              <div className="empty-icon">📖</div>
+              <p className="empty-title">Full article content is being loaded</p>
+              <p className="empty-subtitle">
+                We are enriching this article for in-app reading. In the meantime, you can read it at the original source.
+              </p>
+              <a
+                href={article.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="empty-link"
+              >
+                <ExternalLink size={15} />
+                Open at {ministry?.name}
+              </a>
+            </div>
+          </div>
+        )}
 
-        {/* External Link */}
-        <div className="mt-8 pt-6 border-t border-elevated">
+        {/* Original Source Link (always shown at bottom) */}
+        <div className="mt-10 pt-6 border-t border-elevated flex items-center justify-between">
           <a
             href={article.source_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-secondary hover:underline text-sm"
+            className="inline-flex items-center gap-2 text-text-secondary hover:text-secondary transition-colors text-sm"
           >
             <ExternalLink size={14} />
-            Read original article at {ministry?.name}
+            Original article at {ministry?.name}
           </a>
+          {article.topic_tags && article.topic_tags.length > 0 && (
+            <div className="flex gap-2 flex-wrap justify-end">
+              {article.topic_tags.slice(0, 3).map((tag) => (
+                <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-elevated text-text-secondary">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Ask a Question Banner */}
+        <div className="mt-10 rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 px-5 py-5 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-white font-semibold text-sm mb-0.5">Have a question about this topic?</p>
+            <p className="text-text-secondary text-xs">Ask our team anything about theology or the Christian faith.</p>
+          </div>
+          <Link
+            href="/ask"
+            className="flex-shrink-0 px-4 py-2 rounded-full bg-primary text-white text-xs font-semibold hover:bg-primary/90 transition-colors shadow-glow-pink whitespace-nowrap"
+          >
+            Ask a Question
+          </Link>
         </div>
 
         {/* More from Ministry */}
@@ -364,24 +410,76 @@ export default function ArticleReaderPage() {
           color: #E0E0E0;
           line-height: 1.9;
         }
-        .article-body h1, .article-body h2, .article-body h3, .article-body h4 {
+        .article-body h1, .article-body h2, .article-body h3, .article-body h4, .article-body h5 {
           font-family: var(--font-poppins), sans-serif;
           color: white;
           font-weight: 700;
-          margin: 1.5em 0 0.5em;
+          margin: 1.8em 0 0.6em;
+          line-height: 1.3;
         }
-        .article-body p { margin-bottom: 1.2em; }
-        .article-body a { color: #29B6F6; text-decoration: underline; }
+        .article-body h1 { font-size: 1.6em; }
+        .article-body h2 { font-size: 1.35em; }
+        .article-body h3 { font-size: 1.15em; }
+        .article-body p { margin-bottom: 1.3em; }
+        .article-body a { color: #29B6F6; text-decoration: underline; word-break: break-word; }
         .article-body blockquote {
           border-left: 3px solid #E040A0;
-          padding-left: 1.2em;
+          padding: 0.8em 1.2em;
           margin: 1.5em 0;
-          color: #9E9E9E;
+          background: rgba(224,64,160,0.06);
+          border-radius: 0 8px 8px 0;
+          color: #B0BEC5;
           font-style: italic;
         }
-        .article-body img { max-width: 100%; border-radius: 8px; margin: 1em 0; }
-        .article-body ul, .article-body ol { padding-left: 1.5em; margin-bottom: 1.2em; }
-        .article-body li { margin-bottom: 0.4em; }
+        .article-body img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 10px;
+          margin: 1.5em auto;
+          display: block;
+        }
+        .article-body ul, .article-body ol { padding-left: 1.6em; margin-bottom: 1.3em; }
+        .article-body li { margin-bottom: 0.5em; }
+        .article-body strong, .article-body b { color: white; font-weight: 600; }
+        .article-body em { font-style: italic; color: #CFD8DC; }
+        .article-body pre, .article-body code {
+          background: rgba(255,255,255,0.06);
+          border-radius: 6px;
+          padding: 0.2em 0.5em;
+          font-family: monospace;
+          font-size: 0.9em;
+        }
+        .article-body figure { margin: 1.5em 0; text-align: center; }
+        .article-body figcaption { font-size: 0.85em; color: #78909C; margin-top: 0.4em; }
+        .article-body table { width: 100%; border-collapse: collapse; margin: 1.5em 0; font-size: 0.95em; }
+        .article-body th { background: rgba(255,255,255,0.08); color: white; padding: 0.6em 1em; text-align: left; }
+        .article-body td { padding: 0.6em 1em; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        /* Empty state */
+        .article-body-empty { padding: 2em 0; }
+        .empty-content-card {
+          background: rgba(255,255,255,0.04);
+          border: 1px dashed rgba(255,255,255,0.12);
+          border-radius: 16px;
+          padding: 2.5em 2em;
+          text-align: center;
+        }
+        .empty-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .empty-title { color: white; font-family: var(--font-poppins); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.6em; }
+        .empty-subtitle { color: #78909C; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5em; }
+        .empty-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5em;
+          background: rgba(41,182,246,0.1);
+          border: 1px solid rgba(41,182,246,0.3);
+          color: #29B6F6;
+          padding: 0.6em 1.4em;
+          border-radius: 999px;
+          font-size: 0.9rem;
+          text-decoration: none;
+          transition: background 0.2s;
+        }
+        .empty-link:hover { background: rgba(41,182,246,0.2); }
       `}</style>
     </div>
   );
