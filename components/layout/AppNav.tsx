@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Home, Search, Bookmark, Library, User, X, Menu } from "lucide-react";
+import { Home, Search, Bookmark, Library, User, X, Menu, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GospelLensLogo } from "@/components/ui/Logo";
 import { NotificationsDropdown } from "@/components/ui/NotificationsDropdown";
@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { href: "/search",    label: "Search",    Icon: Search },
   { href: "/discover",  label: "Resources", Icon: Library },
   { href: "/bookmarks", label: "Bookmarks", Icon: Bookmark },
+  { href: "/ask",       label: "Ask",       Icon: HelpCircle },
 ];
 
 export function AppNav() {
